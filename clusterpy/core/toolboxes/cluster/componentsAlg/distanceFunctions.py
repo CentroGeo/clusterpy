@@ -2,6 +2,9 @@
 """
 Distance functions
 """
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -35,7 +38,7 @@ def distanceA2AEuclideanSquared(x, std=[], w=[]):
     numrows = len(x)
     distance = [0]*(numrows-1)
 
-    for row in xrange(numrows - 1):
+    for row in range(numrows - 1):
         npsublist = np.subtract(x[row], x[row + 1])
         sublist = npsublist.tolist()
         distance[row] = [square_double(sublist)]
@@ -61,12 +64,12 @@ def getHammingDistance(X, Y):
 
         assigned = {}
 
-        for i in xrange(lenX):
+        for i in range(lenX):
             if X[i] not in assigned:
                 assigned[X[i]] = r
                 r += 1
 
-        for i in xrange(lenX):
+        for i in range(lenX):
             XP[i] = assigned[XP[i]]
 
         return XP
@@ -91,7 +94,7 @@ def getHammingDistance(X, Y):
     for i in range(minLen):
         if XP[i] != YP[i]:
             distance += 1
-    return (maxLen - distance + 0.0)/maxLen
+    return old_div((maxLen - distance + 0.0),maxLen)
 
 def distanceA2AHausdorff(x, y):
     """

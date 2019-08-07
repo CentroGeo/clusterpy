@@ -1,6 +1,9 @@
 # encoding: latin2
 """AZP
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -9,9 +12,9 @@ __maintainer__ = "RiSE Group"
 __email__ = "contacto@rise-group.org"
 
 import time as tm
-from componentsAlg import AreaManager
-from componentsAlg import ExtendedMemory
-from componentsAlg import RegionMaker
+from .componentsAlg import AreaManager
+from .componentsAlg import ExtendedMemory
+from .componentsAlg import RegionMaker
 
 __all__ = ['execAZP']
 
@@ -68,19 +71,19 @@ def execAZP(y, w, pRegions, initialSolution=[]):
     ID variable is added to the dissolved map.
 
     """
-    print "Running original AZP algorithm (Openshaw and Rao, 1995)"
-    print "Number of areas: ", len(y)
+    print("Running original AZP algorithm (Openshaw and Rao, 1995)")
+    print("Number of areas: ", len(y))
     if initialSolution != []:
         import numpy
-        print "Number of regions: ", len(numpy.unique(initialSolution))
+        print("Number of regions: ", len(numpy.unique(initialSolution)))
         pRegions = len(numpy.unique(initialSolution))
     else:
-        print "Number of regions: ", pRegions
+        print("Number of regions: ", pRegions)
     if pRegions >= len(y):
         message = "\n WARNING: You are aggregating "+str(len(y))+" into"+\
         str(pRegions)+" regions!!. The number of regions must be an integer"+\
         " number lower than the number of areas being aggregated"
-        raise Exception, message
+        raise Exception(message)
 
     distanceType = "EuclideanSquared" 
     distanceStat = "Centroid"
@@ -91,7 +94,7 @@ def execAZP(y, w, pRegions, initialSolution=[]):
 
     #  CONSTRUCTION
 
-    print "Constructing regions"
+    print("Constructing regions")
     rm = RegionMaker(am, pRegions, 
                     initialSolution=initialSolution,
                     distanceType=distanceType,
@@ -99,19 +102,19 @@ def execAZP(y, w, pRegions, initialSolution=[]):
                     selectionType=selectionType,
                     objectiveFunctionType=objectiveFunctionType)
     Sol = rm.returnRegions()
-    print "initial Solution: ", Sol
-    print "initial O.F: ", rm.objInfo
+    print("initial Solution: ", Sol)
+    print("initial O.F: ", rm.objInfo)
 
     #  LOCAL SEARCH
 
-    print "Performing local search"
+    print("Performing local search")
     rm.AZPImproving()
     rm.calcObj()
     time = tm.time() - start
     Sol = rm.returnRegions()
     Of = rm.objInfo
-    print "FINAL SOLUTION: ", Sol
-    print "FINAL O.F.: ", Of
+    print("FINAL SOLUTION: ", Sol)
+    print("FINAL O.F.: ", Of)
     output = { "objectiveFunction": Of,
     "runningTime": time,
     "algorithm": "azp",
@@ -121,5 +124,5 @@ def execAZP(y, w, pRegions, initialSolution=[]):
     "distanceStat": distanceStat,
     "selectionType": selectionType,
     "ObjectiveFuncionType": objectiveFunctionType} 
-    print "Done"
+    print("Done")
     return output

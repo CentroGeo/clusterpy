@@ -2,6 +2,12 @@
 """Algorithm utilities
 G{packagetree core}
 """
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from builtins import object
+from past.utils import old_div
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -9,10 +15,10 @@ __version__ = "1.0.0"
 __maintainer__ = "RiSE Group"
 __email__ = "contacto@rise-group.org"
 
-from areacl import AreaCl
-from dist2Regions import distanceStatDispatcher
+from .areacl import AreaCl
+from .dist2Regions import distanceStatDispatcher
 
-class AreaManager:
+class AreaManager(object):
     """
     This class contains operations at areal level, including the generation of
     instances of areas, a wide range of area2area and area2region distance
@@ -62,7 +68,7 @@ class AreaManager:
             a = AreaCl(key, neighbours, data, self.variance)
             self.areas[key] = a
         if len(self.noNeighs) > 0:
-            print "Disconnected areas neighs: ", list(self.noNeighs)
+            print("Disconnected areas neighs: ", list(self.noNeighs))
 
     def returnDistance2Area(self, area, otherArea):
         """
@@ -90,7 +96,7 @@ class AreaManager:
         for aID in areaList:
             i = 0
             for index in dataIndex:
-                dataAvg[i] += self.areas[aID].data[index] /len(areaList)
+                dataAvg[i] += old_div(self.areas[aID].data[index],len(areaList))
                 i += 1
         return dataAvg
 
@@ -101,14 +107,14 @@ class AreaManager:
         """
         if isinstance(distanceStat, str):
             if len(indexData) == 0:
-                indexData = range(len(area.data))
+                indexData = list(range(len(area.data)))
             return self.distanceStatDispatcher[distanceStat](self, area, areaList, indexData)
         else:
             distance = 0.0
             i = 0
             for dS in distanceStat:
                 if len(indexData) == 0:
-                    indexDataDS = range(len(area.data))
+                    indexDataDS = list(range(len(area.data)))
                 else:
                     indexDataDS = indexData[i]
                 if len(weights) > 0:

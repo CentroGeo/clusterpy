@@ -1,6 +1,12 @@
 # encoding: latin2
 """Dissolve manager
 """
+from __future__ import division
+from __future__ import print_function
+from builtins import str
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 __author__ = "Boris Dev,Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -36,10 +42,10 @@ def dissolveLayer(father, son, region2areas):
     :type region2areas: list
     """
     if not region2areas:
-        print "Problem: No clustering algorithm has been executed on the layer"
+        print("Problem: No clustering algorithm has been executed on the layer")
     if len(region2areas) != len(father.areas):
-        print "Problem: Amount of assigned regions does not match number of areas"
-        print "Regions:", father.region2areas
+        print("Problem: Amount of assigned regions does not match number of areas")
+        print("Regions:", father.region2areas)
     else:
         areas = father.areas
         s,mx,my = getScaleRatio(areas, canvasH=500, canvasW=500)
@@ -57,16 +63,16 @@ def dissolveLayer(father, son, region2areas):
             son.name = father.name + '_' + str(len(father.results))
             father.results.append(son)
         except KeyError as ke:
-            print "clusterPy is not able to dissolve your map based on this solution.\
+            print("clusterPy is not able to dissolve your map based on this solution.\
 Please execute the command Layer.exportArcData(""dissolveProblem"") and send us \
 the resulting files to software@rise-group.org to analyse the problem and give \
-you a solution as soon asposible. Your feedback is important for us."
+you a solution as soon asposible. Your feedback is important for us.")
             raise ke
         except ValueError as ve:
-            print "clusterPy is not able to dissolve your map based on this solution.\
+            print("clusterPy is not able to dissolve your map based on this solution.\
 Please execute the command Layer.exportArcData(""dissolveProblem"") and send us \
 the resulting files to software@rise-group.org to analyse the problem and give \
-you a solution as soon asposible. Your feedback is important for us."
+you a solution as soon asposible. Your feedback is important for us.")
             raise ve
         
          
@@ -74,7 +80,7 @@ def dissolveMap(originalAREAS, areaObjsList, ringObjsDict, regions):
     AREAS = originalAREAS
     RegAreaObjsD = {} # RegAreaObjsD is {region : [areaObjs]}
     for oldareaIdx, region in enumerate(regions):
-        if RegAreaObjsD.has_key(region):
+        if region in RegAreaObjsD:
             RegAreaObjsD[region].append(areaObjsList[oldareaIdx])
         else:
             RegAreaObjsD[region]=[areaObjsList[oldareaIdx]]
@@ -175,9 +181,9 @@ def getScaleRatio(shapes, canvasH=500, canvasW=500):
     minys = min(ys)    
     maxys = max(ys)  
     if abs(minxs - maxxs) > abs(minys - maxys):  # xdim is longer than y dim
-        scale = canvasW / abs(minxs - maxxs)
+        scale = old_div(canvasW, abs(minxs - maxxs))
     else:
-        scale = canvasH / abs(minys - maxys)
+        scale = old_div(canvasH, abs(minys - maxys))
     return scale, minxs, minys    
 
 def scale(shapes, canvasH=500, canvasW=500):
@@ -195,9 +201,9 @@ def scale(shapes, canvasH=500, canvasW=500):
     minys = min(ys)    
     maxys = max(ys)  
     if abs(minxs - maxxs) > abs(minys - maxys):  # xdim is longer than y dim
-        scale = canvasW / abs(minxs - maxxs)
+        scale = old_div(canvasW, abs(minxs - maxxs))
     else:
-        scale = canvasH / abs(minys - maxys)
+        scale = old_div(canvasH, abs(minys - maxys))
     canvasShapes = []
     for shape in shapes:
         newshape = []
@@ -205,7 +211,7 @@ def scale(shapes, canvasH=500, canvasW=500):
             newring = []
             x=[((x - minxs) * scale) + 5 for x in [p[0] for p in ring]]
             y=[500 - ((y-minys) * scale) - 5 for y in [p[1] for p in ring]]
-            points = zip(x, y)
+            points = list(zip(x, y))
             newring.extend(points)
             newshape.append(newring)
         canvasShapes.append(newshape)    
@@ -262,7 +268,7 @@ def readAreas(AREAS):
                 segObj.unsorted.extend(lineseg)
                 segObj.sorted = sortedlineseg
                 ringObj.segments.append(segObj)
-                if point2segments.has_key(point1):
+                if point1 in point2segments:
                     point2segments[point1].update(sortedlineseg)
 
                     #  if len(point2segments[point1]) >= 3: 
@@ -273,7 +279,7 @@ def readAreas(AREAS):
                 else:
                     point2segments[point1] = set([sortedlineseg]) 
                     point2areas[point1] = set([areaObj.positionalId])
-                if segment2areas.has_key(sortedlineseg):
+                if sortedlineseg in segment2areas:
                     area1 = segment2areas[sortedlineseg]
                     area2 = areaObj.positionalId
 
@@ -295,24 +301,24 @@ def readAreas(AREAS):
                     segment2areas[sortedlineseg] = areaObj.positionalId
                     segment2rings[sortedlineseg] = id(ringObj)
                 if (i == len(ring) - 1) and point2 != ring[0]:    
-                    raise Exception, "PROBLEM: last point of last segment != ring[0]"
+                    raise Exception("PROBLEM: last point of last segment != ring[0]")
 
     #  Below is an example of how to identify points basedby num of areas sharing it
     #  point3areas = [(v, k) for (k, v) in point2areas.iteritems() if len(v) > 2]
     #  Make Wqueen based on info in point2areas
 
-    ListAreasOfSharedPoints = [list(v) for (k, v) in point2areas.iteritems() if len(v) > 1]
+    ListAreasOfSharedPoints = [list(v) for (k, v) in point2areas.items() if len(v) > 1]
     WqueenSet = Wqueen
     for areas in ListAreasOfSharedPoints:
         for area in areas:
             WqueenSet[area].update(areas)
             WqueenSet[area].remove(area)
-    Wqueen = dict([(k, list(v)) for (k, v) in WqueenSet.iteritems()])
+    Wqueen = dict([(k, list(v)) for (k, v) in WqueenSet.items()])
 
     ##  EXTRA STUFF NONESSENTIAL BELOW: COMPARE QUEEN vs. ROOK 
 
-    WqueenList = [(k, set(v)) for (k, v) in Wqueen.iteritems()]
-    WrookList = [(k, set(v)) for (k, v) in Wrook.iteritems()]
+    WqueenList = [(k, set(v)) for (k, v) in Wqueen.items()]
+    WrookList = [(k, set(v)) for (k, v) in Wrook.items()]
 
     #  what areas are not in each others neighborset
 
@@ -320,7 +326,7 @@ def readAreas(AREAS):
     diffcount = 0
     for i in RookVersusQueen:
         diffcount = diffcount + len(i)
-    for R in ringObjsDict.values():
+    for R in list(ringObjsDict.values()):
         start = 0
         for i, p in enumerate(R[1:]):
 
@@ -458,9 +464,9 @@ def invertScale(scale, minxs, minys, shapes):
             #  x = [((x - minxs) * scale) + 5 for x in [p[0] for p in ring]]
             #  y = [500 - ((y - minys) * scale)- 5 for y in [p[1] for p in ring]]
 
-            x=[((x - 5) / scale) + minxs for x in [p[0] for p in ring]]
-            y=[(-1 * ( (y - 495) / scale)) + minys for y in [p[1] for p in ring]]
-            points = zip(x, y)
+            x=[(old_div((x - 5), scale)) + minxs for x in [p[0] for p in ring]]
+            y=[(-1 * ( old_div((y - 495), scale))) + minys for y in [p[1] for p in ring]]
+            points = list(zip(x, y))
             newring.extend(points)
             newshape.append(newring)
         canvasShapes.append(newshape)    
@@ -588,9 +594,9 @@ def connector(lines):
     newRings = []
     point2segs = {}
     for line in lines:
-        if point2segs.has_key(line[0]) == False: point2segs[line[0]] = [line[1]]
+        if (line[0] in point2segs) == False: point2segs[line[0]] = [line[1]]
         else: point2segs[line[0]].append(line[1])
-        if point2segs.has_key(line[1]) == False: point2segs[line[1]] = [line[0]]
+        if (line[1] in point2segs) == False: point2segs[line[1]] = [line[0]]
         else: point2segs[line[1]].append(line[0])
 
     #  Clean bad lines segments that are not truly part of a loop, like stranded hairs
@@ -598,9 +604,9 @@ def connector(lines):
 
     CLEAN = False
     while CLEAN == False:
-        N = len(point2segs.items())
+        N = len(list(point2segs.items()))
         cleancount = 0
-        for item in point2segs.items():
+        for item in list(point2segs.items()):
             if len(item[1]) == 1:  #  problem: key point connects to just one other point
                 keypt = item[0]
                 pt = item[1]
@@ -623,14 +629,14 @@ def connector(lines):
         elif len(item[1]) == 4: 
             Fig8items.append(item)
         else:
-            print " Problem points :"
-            print "len(item): ", len(item)
+            print(" Problem points :")
+            print("len(item): ", len(item))
     FIG8START = copy.deepcopy(Fig8items)
     if len(Fig8items) > 0:  #  start with fig8 ring's middle point, if fig8 exists
         startitem = Fig8items.pop()
         startkeypt = startitem[0]
     else:
-        startkeypt=point2segs.items()[0][0]
+        startkeypt=list(point2segs.items())[0][0]
     pt = point2segs[startkeypt].pop()  #  from 4 (or 2) pts to 3 (or 1) pt(s) in list
     partRing = [startkeypt, pt]
     point2segs[pt].remove(startkeypt)  #  step 2 remove seg from dict
@@ -650,19 +656,19 @@ def connector(lines):
             if point2segs[newEndpt] == []: 
                 point2segs.pop(newEndpt)
             partRing.append(newEndpt)  #  connect pt to new chain
-        if partRing[0] == partRing[-1] and len(point2segs.keys()) != 0: 
+        if partRing[0] == partRing[-1] and len(list(point2segs.keys())) != 0: 
             newRings.append(partRing)
             if len(Fig8items) > 0:  #  start with fig8 ring's middle point, if fig8 exists
                 startitem = Fig8items.pop()
                 startkeypt = startitem[0]
                 FIG8 = True
             else:
-                startkeypt=point2segs.items()[0][0]
+                startkeypt=list(point2segs.items())[0][0]
                 FIG8 = False
             pt = point2segs[startkeypt].pop()  #  from 4 (or 2) pts to 3 (or 1) pt(s) in list
             partRing = [ startkeypt, pt]
             point2segs[pt].remove(startkeypt)  #  step 2 remove seg from dict
-        elif partRing[0] == partRing[-1] and len(point2segs.keys()) == 0:
+        elif partRing[0] == partRing[-1] and len(list(point2segs.keys())) == 0:
             newRings.append(partRing)
             DONE = True
 

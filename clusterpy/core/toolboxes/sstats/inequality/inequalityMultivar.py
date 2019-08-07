@@ -1,6 +1,8 @@
 # encoding: latin2
 """Inequality index for multiple variables
 """
+from __future__ import absolute_import
+from builtins import zip
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,7 +12,7 @@ __email__ = "contacto@rise-group.org"
 
 __all__ = ['inequalityMultivar']
 
-from theilIndex import theil 
+from .theilIndex import theil 
 
 import numpy
 
@@ -39,16 +41,16 @@ def inequalityMultivar(Y, area2region, index = 'theil'):
         result = instance.inequality('inequality',['Y1978', 'Y1979', 'Y1980', 'Y1981'], 'BELS', index = 'theil')
 
     """
-    matrix = numpy.matrix(Y.values()).transpose()
+    matrix = numpy.matrix(list(Y.values())).transpose()
     periods = [x.tolist()[0] for x in matrix]
-    areas = Y.keys()
+    areas = list(Y.keys())
     t = []
     tb = []
     tw = []
     tw_t = []
     for var in periods:
         var = [[x] for x in var]
-        dictionary = dict(zip(areas,var))
+        dictionary = dict(list(zip(areas,var)))
         if index == 'theil':
             t2,tb2,tw2 = theil(dictionary,area2region)
             tw_t2 = tw2/float(t2)

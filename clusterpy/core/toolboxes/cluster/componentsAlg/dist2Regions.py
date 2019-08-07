@@ -2,6 +2,8 @@
 """
 Distance functions from an area to a region
 """
+from __future__ import division
+from past.utils import old_div
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -22,7 +24,7 @@ def getDistance2RegionCentroid(areaManager, area, areaList, indexData=[]):
     else:
         for aID in areaList:
             sumAttributes += np.array(areaManager.areas[aID].data)
-    centroidRegion = sumAttributes/len(areaList)
+    centroidRegion = old_div(sumAttributes,len(areaList))
     regionDistance = sum((np.array(area.data) - centroidRegion) ** 2)
     return regionDistance
 

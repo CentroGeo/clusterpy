@@ -1,6 +1,11 @@
 # encoding: latin2
 """ARiSeL
 """
+from __future__ import division
+from __future__ import print_function
+from builtins import str
+from builtins import range
+from past.utils import old_div
 __author__ = "Juan C. Duque and Richard L. Church"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -129,13 +134,13 @@ def execArisel(y, w, pRegions, inits = 3, initialSolution = [],
     start = 0.0
     time2 = 0.0
 
-    print "Running original Arisel algorithm"
-    print "Number of areas: ", lenY
+    print("Running original Arisel algorithm")
+    print("Number of areas: ", lenY)
     if initialSolution:
-        print "Number of regions: ", len(np.unique(initialSolution))
+        print("Number of regions: ", len(np.unique(initialSolution)))
         pRegions = len(set(initialSolution))
     else:
-        print "Number of regions: ", pRegions
+        print("Number of regions: ", pRegions)
     if pRegions >= lenY:
         message = "\n WARNING: You are aggregating "+str(lenY)+" into"+\
         str(pRegions)+" regions!!. The number of regions must be an integer"+\
@@ -143,7 +148,7 @@ def execArisel(y, w, pRegions, inits = 3, initialSolution = [],
         raise Exception(message)
 
     if convTabu <= 0:
-        convTabu = lenY/pRegions  #   convTabu = 230*numpy.sqrt(pRegions)
+        convTabu = old_div(lenY,pRegions)  #   convTabu = 230*numpy.sqrt(pRegions)
     distanceType = "EuclideanSquared"
     distanceStat = "Centroid"
     objectiveFunctionType = "SS"
@@ -155,7 +160,7 @@ def execArisel(y, w, pRegions, inits = 3, initialSolution = [],
     procs = []
 
     start = tm.time()
-    for dummy in xrange(inits):
+    for dummy in range(inits):
         ans = pool.apply_async(constructPossible, [am, pRegions,
                                                    initialSolution,
                                                    distanceType,
@@ -176,12 +181,12 @@ def execArisel(y, w, pRegions, inits = 3, initialSolution = [],
     extendedMemory.updateExtendedMemory(rm)
 
     rm.recoverFromExtendedMemory(extendedMemory)
-    print "INITIAL SOLUTION: ", rm.returnRegions(), "\nINITIAL OF: ", rm.objInfo
+    print("INITIAL SOLUTION: ", rm.returnRegions(), "\nINITIAL OF: ", rm.objInfo)
     rm.tabuMove(tabuLength=tabuLength, convTabu=convTabu)
     time2 = tm.time() - start
     Sol = rm.regions
     Of = rm.objInfo
-    print "FINAL SOLUTION: ", Sol, "\nFINAL OF: ", Of
+    print("FINAL SOLUTION: ", Sol, "\nFINAL OF: ", Of)
     output = { "objectiveFunction": Of,
                "runningTime": time2,
                "algorithm": "arisel",

@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import zip
+from past.utils import old_div
 import copy
 import numpy
 from scipy.sparse import dok_matrix, linalg
@@ -20,7 +23,7 @@ def topoStatistics(W,nWrook,regular=False):
     for w in nWrook:
         nw += [len(W[w])]
         if nw[-1] != 0:
-            if areas_nngs.has_key(nw[-1]):
+            if nw[-1] in areas_nngs:
                 areas_nngs[nw[-1]].append(w)
             else:
                 areas_nngs[nw[-1]] = [w]
@@ -54,7 +57,7 @@ def topoStatistics(W,nWrook,regular=False):
             X2.append(n)
             Y.append(n*m[n])
             Y2.append((n**2)*m[n])
-    X = numpy.matrix(zip(X1,X2))
+    X = numpy.matrix(list(zip(X1,X2)))
     Y = numpy.matrix(Y)
     sparseness = n1/float(len(W)**2-len(W))
     if regular:
@@ -65,7 +68,7 @@ def topoStatistics(W,nWrook,regular=False):
     else:
         B = (X.transpose()*X)**(-1)*X.transpose()*Y.transpose()
         a1 = (mu1*(mu2+numpy.mean(Y)) - numpy.mean(Y2))/float(mu2)
-        a2 = (B[0] - mu2)/mu1 #ESTE NO DA
+        a2 = old_div((B[0] - mu2),mu1) #ESTE NO DA
         a3 = -1*(B[1] -mu1)
     return max(nw), min(nw), numpy.mean(nw),mu2,a1,sparseness,eig
 

@@ -1,6 +1,8 @@
 # encoding: latin2
 """SMA data module
 """
+from __future__ import absolute_import
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2010-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,7 +12,7 @@ __email__ = "contacto@rise-group.org"
 __all__ = ['generateSMA']
 
 import numpy
-from componentsData import wToMatrix
+from .componentsData import wToMatrix
 
 def generateSMA(w, n, rho):
     """
@@ -46,7 +48,7 @@ def generateSMA(w, n, rho):
     CVCV = numpy.linalg.cholesky(VCV)
     matData = numpy.dot(CVCV, numpy.random.randn(dim, n))
     y = {}
-    for i in xrange(dim):
+    for i in range(dim):
         y[i] = matData[i].tolist()[0]
     return y
 

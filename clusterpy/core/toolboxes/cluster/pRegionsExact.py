@@ -1,6 +1,9 @@
 # encoding: latin2
 """P-regions
 """
+from __future__ import print_function
+from builtins import str
+from builtins import range
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -81,10 +84,10 @@ def execPregionsExact(y, w, p=2,rho='none', inst='none', conseq='none'):
     l=n-p
 
     # Area iterator
-    numA = range(n)
+    numA = list(range(n))
 
     d={}
-    temp=range(n-1)
+    temp=list(range(n-1))
     for i in temp:
         list1=[]
     	for j in numA:
@@ -246,11 +249,11 @@ def execPregionsExact(y, w, p=2,rho='none', inst='none', conseq='none'):
 			"distanceStat" : "None",
 			"selectionType" : "None",
 			"ObjectiveFunctionType" : "None"} 
-		print "Done"
+		print("Done")
 		return output
                 
     except GurobiError:
-        print 'Error reported'
+        print('Error reported')
 		
 
 

@@ -2,6 +2,10 @@
 """Algorithm utilities
 G{packagetree core}
 """
+from __future__ import division
+from builtins import range
+from builtins import object
+from past.utils import old_div
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -12,7 +16,7 @@ __email__ = "contacto@rise-group.org"
 from clusterpy.core.toolboxes.cluster.componentsAlg.distanceFunctions import distMethods
 import numpy as np
 
-class AreaCl:
+class AreaCl(object):
     """
     Area Class for Regional Clustering.
     """
@@ -35,7 +39,7 @@ class AreaCl:
         if variance == "false":
             self.data = data
         else:
-            n = (np.sqrt(9 + 8 * (len(data) - 1)) - 3) / 2
+            n = old_div((np.sqrt(9 + 8 * (len(data) - 1)) - 3), 2)
             self.var = np.matrix(np.identity(n))
             index = n + 1
             for i in range(int(n)):

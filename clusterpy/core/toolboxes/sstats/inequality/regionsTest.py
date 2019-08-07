@@ -1,6 +1,11 @@
 # encoding: latin2
 """global inequality change test
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import zip
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,7 +15,7 @@ __email__ = "contacto@rise-group.org"
 
 __all__ = ['inequalityDynamic']
 
-from theilIndex import theil 
+from .theilIndex import theil 
 import numpy
 import itertools
 
@@ -23,10 +28,10 @@ def interregionalInequalityTestOneVariable(Y, area2region, permutations=9999):
     
     def shuffleMap(Y):
         result = {}
-        values = Y.values()
+        values = list(Y.values())
         numpy.random.shuffle(values)
-        keys = Y.keys()
-        newY = dict(zip(keys,values))
+        keys = list(Y.keys())
+        newY = dict(list(zip(keys,values)))
         return newY    
 
     results = []
@@ -73,7 +78,7 @@ def interregionalInequalityTest(Y, fieldNames, area2regions, clusteringNames, ou
         china.inequality('interregionalInequalityTest',['Y1978', 'Y1979', 'Y1980', 'Y1981'], ['BELS','T78-98','T78-85'], "interregional_inequality_test.csv")
 
     """
-    print "Creating interregional Inequality Test [Rey_Sastre2010 - Table 5]"
+    print("Creating interregional Inequality Test [Rey_Sastre2010 - Table 5]")
     fout = open(outFile,"w")
     line = "," + ",".join(fieldNames) + "\n"
     fout.write(line)
@@ -84,6 +89,6 @@ def interregionalInequalityTest(Y, fieldNames, area2regions, clusteringNames, ou
         line = clusteringNames[ni] + "," + ",".join(results) + "\n"
         fout.write(line)
     fout.close()
-    print "interregional Inequality Test created!"
+    print("interregional Inequality Test created!")
     return None    
     

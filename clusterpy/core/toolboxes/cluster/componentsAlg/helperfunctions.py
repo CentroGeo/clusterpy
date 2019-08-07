@@ -2,6 +2,10 @@
 """Algorithm utilities
 G{packagetree core}
 """
+from __future__ import division
+from __future__ import absolute_import
+from builtins import range
+from past.utils import old_div
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,7 +14,7 @@ __maintainer__ = "RiSE Group"
 __email__ = "contacto@rise-group.org"
 
 import numpy as np
-from areacl import AreaCl
+from .areacl import AreaCl
 
 def indexMultiple(x,value):
     """
@@ -31,7 +35,7 @@ def calculateGetisG(keyList, dataMean, dataStd, dataDictionary, dataLength):
 
     #  denominator = (dataStd*((dataLength*neighborNumber-(neighborNumber**2))/(dataLength-1))**0.5)
 
-    G = numerator / denominator
+    G = old_div(numerator, denominator)
     return G
 
 def quickSortIntersection(dataList, keyList, discardList):
@@ -85,8 +89,8 @@ def neighborSort(dictionary, discardList):
     Returns the list of keys of a dictionary sorted by the
     values that are assigned by them.
     """
-    dataList = dictionary.values()
-    keyList = dictionary.keys()
+    dataList = list(dictionary.values())
+    keyList = list(dictionary.keys())
     return quickSortIntersection(dataList, keyList, discardList)
 
 def vectorDistance(v1, v2):
@@ -111,7 +115,7 @@ def calculateCentroid(areaList):
     for area in areaList:
         pg += area.data[0]
         pk = pk + [area.data[0]]
-    pkPg = np.matrix(pk).T / pg
+    pkPg = old_div(np.matrix(pk).T, pg)
     data = [0.0] * len(area.data)
     var = np.matrix(areaList[0].var) * 0.0
     j = 0
@@ -139,7 +143,7 @@ def comb(n, m):
     This function calculates the number of possible combinations of n items
     chosen by m.
     """
-    return factorial(n) / (factorial(m) * factorial(n - m))
+    return old_div(factorial(n), (factorial(m) * factorial(n - m)))
 
 def recode(X):
     """
@@ -152,12 +156,12 @@ def recode(X):
 
     assigned = {}
 
-    for i in xrange(lenX):
+    for i in range(lenX):
         if X[i] not in assigned:
             assigned[X[i]] = r
             r += 1
 
-    for i in xrange(lenX):
+    for i in range(lenX):
         XP[i] = assigned[XP[i]]
 
     return XP
@@ -166,15 +170,15 @@ def sortedKeys(d):
     """
     Return keys of the dictionary d sorted based on their values.
     """
-    values = d.values()
+    values = list(d.values())
     sortedIndices = np.argsort(values)
-    sortedKeys = [d.keys()[i] for i in sortedIndices]
+    sortedKeys = [list(d.keys())[i] for i in sortedIndices]
     minVal = min(values)
     countMin = values.count(minVal)
     if countMin > 1:
         minIndices = sortedKeys[0: countMin]
         nInd = len(minIndices)
-        idx = range(nInd)
+        idx = list(range(nInd))
         np.random.shuffle(idx)
         permMins = idx
         c = 0
@@ -190,7 +194,7 @@ def feasibleRegion(feasDict):
     """
     areas2Eval = []
     areas = {}
-    for key in feasDict.keys():
+    for key in list(feasDict.keys()):
         try:
             neighbours = feasDict[key]
         except:

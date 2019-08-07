@@ -1,6 +1,9 @@
 # encoding: latin2
 """clusterPy Output methods
 """
+from __future__ import division
+from builtins import str
+from past.utils import old_div
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -89,7 +92,7 @@ def shpWriter(areas, fileName, type=1):
         #             Ymin) + struct.pack('<d', Xmax) + struct.pack('<d', Ymax) + struct.pack('<i',
         #             numParts) + struct.pack('<i', numPoints) + parts  + puntos
         areaValues = struct.pack('<i', type) + puntos
-        varLength = (len(areaValues)/2)
+        varLength = (old_div(len(areaValues),2))
         contentLength = struct.pack('>l', varLength)
         shxOffset = shxOffset + oldOffset
         oldOffset = varLength + 4
@@ -105,12 +108,12 @@ def shpWriter(areas, fileName, type=1):
     Zmax = 0
     Mmin = 0
     Mmax = 0
-    flength = (len(linea) + 100)/2
+    flength = old_div((len(linea) + 100),2)
     header1 = struct.pack('>l', 9994) + struct.pack('>l', 0) * 5 + struct.pack('>l', flength) + struct.pack('<l', 
                     1000) + struct.pack('<l', type) + struct.pack('<d', Xmin) + struct.pack('<d', 
                     Ymin) + struct.pack('<d', Xmax) + struct.pack('<d', Ymax) + struct.pack('<d', Zmin) + struct.pack('<d', 
                     Zmax) + struct.pack('<d', Mmin) + struct.pack('<d', Mmax)
-    header2 = struct.pack('>l', 9994) + struct.pack('>l', 0) * 5 + struct.pack('>l', (len(linea2) + 100)/2) + struct.pack('<l',
+    header2 = struct.pack('>l', 9994) + struct.pack('>l', 0) * 5 + struct.pack('>l', old_div((len(linea2) + 100),2)) + struct.pack('<l',
                     1000) + struct.pack('<l', type) + struct.pack('<d', Xmin) + struct.pack('<d', Ymin) + struct.pack('<d', 
                     Xmax) + struct.pack('<d', Ymax) + struct.pack('<d', Zmin) + struct.pack('<d', Zmax) + struct.pack('<d', 
                     Mmin) + struct.pack('<d', Mmax)
@@ -171,7 +174,7 @@ def shpWriter2(areas, fileName, type=5):
         areaValues = struct.pack('<i', type) + struct.pack('<d', Xmin) + struct.pack('<d', Ymin) + struct.pack('<d', 
                         Xmax) + struct.pack('<d', Ymax) + struct.pack('<i', numParts) + struct.pack('<i', 
                         numPoints) + parts + puntos
-        varLength = (len(areaValues) / 2)
+        varLength = (old_div(len(areaValues), 2))
         contentLength = struct.pack('>l', varLength)
         shxOffset = shxOffset + oldOffset
         oldOffset = varLength + 4
@@ -187,12 +190,12 @@ def shpWriter2(areas, fileName, type=5):
     Zmax = 0
     Mmin = 0
     Mmax = 0
-    flength = (len(linea) + 100) / 2
+    flength = old_div((len(linea) + 100), 2)
     header1 = struct.pack('>l', 9994) + struct.pack('>l', 0) * 5 + struct.pack('>l', flength) + struct.pack('<l', 
                         1000) + struct.pack('<l', type) + struct.pack('<d', Xmin) + struct.pack('<d', Ymin) + struct.pack('<d', 
                         Xmax) + struct.pack('<d', Ymax) + struct.pack('<d', Zmin) + struct.pack('<d', Zmax) + struct.pack('<d', 
                         Mmin) +  struct.pack('<d', Mmax)
-    header2 = struct.pack('>l', 9994) + struct.pack('>l', 0) * 5 + struct.pack('>l', (len(linea2) + 100) / 2) + struct.pack('<l',
+    header2 = struct.pack('>l', 9994) + struct.pack('>l', 0) * 5 + struct.pack('>l', old_div((len(linea2) + 100), 2)) + struct.pack('<l',
                         1000) + struct.pack('<l', type) + struct.pack('<d', Xmin) + struct.pack('<d', Ymin) + struct.pack('<d', 
                         Xmax) + struct.pack('<d', Ymax) + struct.pack('<d', Zmin) + struct.pack('<d', Zmax) + struct.pack('<d', 
                         Mmin) + struct.pack('<d', Mmax)
@@ -230,14 +233,14 @@ def dbfWriter(fieldnames, fieldspecs, records, fileName):
     lenrecord = sum(field[1] for field in fieldspecs) + 1
     hdr = struct.pack('<BBBBLHH20x', ver, yr, mon, day, numrec, lenheader, lenrecord)
     f.write(hdr)
-    for name, (typ, size, deci) in itertools.izip(fieldnames, fieldspecs):
+    for name, (typ, size, deci) in zip(fieldnames, fieldspecs):
         name = name.ljust(11, '\x00')
         fld = struct.pack('<11sc4xBB14x', name, typ, size, deci)
         f.write(fld)
     f.write('\r')
     for record in records:
         f.write(' ')
-        for (typ, size, deci), value in itertools.izip(fieldspecs, record):
+        for (typ, size, deci), value in zip(fieldspecs, record):
             if typ == "N":
                 value = (("%." + str(size) + "f") % value)[0: size].rjust(size, ' ') 
             elif typ == 'D':

@@ -1,6 +1,11 @@
 # encoding: latin2
 """P-regions
 """
+from __future__ import division
+from __future__ import print_function
+from builtins import str
+from builtins import range
+from past.utils import old_div
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -68,10 +73,10 @@ def execMinpFlow(y, w, threshold=1, conseq='none'):
 	ID variable is added to the dissolved map.
 	"""
 
-	print "Running max-p-regions model (Duque, Anselin and Rey, 2010)"
-	print "Exact method"
-	print "Number of areas: ", len(y) 
-	print "threshold value: ", threshold
+	print("Running max-p-regions model (Duque, Anselin and Rey, 2010)")
+	print("Exact method")
+	print("Number of areas: ", len(y)) 
+	print("threshold value: ", threshold)
 	
 	start = tm.time()
 
@@ -79,7 +84,7 @@ def execMinpFlow(y, w, threshold=1, conseq='none'):
 	n = len(y)
 
 	# Area iterator
-	numA = range(n)
+	numA = list(range(n))
 	
 	Wr=w
 	
@@ -209,7 +214,7 @@ def execMinpFlow(y, w, threshold=1, conseq='none'):
 				temp1.append(w[i][k])
 				for j in Wr[i]:
 					temp2.append(f[i,j,k])
-			m.addConstr(quicksum(temp2)<=quicksum(temp1)*(n*1.0/2)*(n+1),"c6_"+str([k]))				
+			m.addConstr(quicksum(temp2)<=quicksum(temp1)*(old_div(n*1.0,2))*(n+1),"c6_"+str([k]))				
 
 
 		# Constraints 7
@@ -270,7 +275,7 @@ def execMinpFlow(y, w, threshold=1, conseq='none'):
 		
 		for v in m.getVars():
 			if v.x >0:
-				print v.varName, v.x
+				print(v.varName, v.x)
 
 				
 		#print "p:", regID
@@ -288,11 +293,11 @@ def execMinpFlow(y, w, threshold=1, conseq='none'):
 			"distanceStat" : "None",
 			"selectionType" : "None",
 			"ObjectiveFunctionType" : "None"} 
-		print "Done"
+		print("Done")
 		return output
 				
 	except GurobiError:
-		print 'Error reported'
+		print('Error reported')
 
 
 

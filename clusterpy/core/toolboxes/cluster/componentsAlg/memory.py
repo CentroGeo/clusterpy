@@ -2,6 +2,7 @@
 """Algorithm utilities
 G{packagetree core}
 """
+from builtins import object
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -11,7 +12,7 @@ __email__ = "contacto@rise-group.org"
 
 from copy import deepcopy
 
-class BasicMemory:
+class BasicMemory(object):
     """
     Keeps the minimum amount of information about a given solution. It keeps the
     Objective function value (self.objInfo) and the region each area has been assigned to

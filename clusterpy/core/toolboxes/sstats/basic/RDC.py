@@ -2,6 +2,9 @@
 """Redistribution Coefficient
 G{packagetree core}
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -11,7 +14,7 @@ __email__ = "contacto@rise-group.org"
 
 import numpy
 import time as tm
-from componentsESDA import absDifference
+from .componentsESDA import absDifference
 
 __all__ = ['redistributionCoef']
 
@@ -57,14 +60,14 @@ def redistributionCoef(*args):
         rdcw[i][i] = 0
         while j < len(varList):
             v2 = varList[j]
-            var1 = [x[0] for x in layer.getVars(v1).values()]
-            var2 = [x[0] for x in layer.getVars(v2).values()]
+            var1 = [x[0] for x in list(layer.getVars(v1).values())]
+            var2 = [x[0] for x in list(layer.getVars(v2).values())]
             rdc[(v1, v2)] = absDifference(var1,var2)
             rdc[(v2, v1)] = rdc[(v1, v2)]
             rdcw[i][j] = rdc[(v1, v2)]
             rdcw[j][i] = rdc[(v1, v2)]
             j = j + 1
         i = i + 1
-    print "rdc has been succesfuly calculed"
+    print("rdc has been succesfuly calculed")
     return rdc, rdcw
 

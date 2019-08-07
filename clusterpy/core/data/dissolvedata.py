@@ -1,6 +1,10 @@
 # encoding: latin2
 """dissolveData
 """
+from __future__ import division
+from __future__ import print_function
+from builtins import range
+from past.utils import old_div
 __author__ = "Juan C. Duque, Alejandro Betancourt, Juan Sebastian Marín"
 __credits__ = "Copyright (c) 2010-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -46,7 +50,7 @@ def dissolveData(fieldnames, Y, region, X):
     count = 0
     fields = [] 
     for i in range(0, len(fieldnames)):
-        if X.has_key(fieldnames[i]):
+        if fieldnames[i] in X:
             fields.append(i)
     i = 0
     k = 0
@@ -74,12 +78,12 @@ def dissolveData(fieldnames, Y, region, X):
     for i in range(len(filter2)):
         k = 0
         auxiliar1 = []
-        for k in range(len(X.keys())):
+        for k in range(len(list(X.keys()))):
             j = k
             variables = []
-            while j <= len(filter2[i]) - len(X.keys()) + k:
+            while j <= len(filter2[i]) - len(list(X.keys())) + k:
                 variables.append(filter2[i][j])
-                j += len(X.keys())
+                j += len(list(X.keys()))
             auxiliar1.append(variables)
         auxiliar2.append(auxiliar1)
     l = 0
@@ -87,46 +91,46 @@ def dissolveData(fieldnames, Y, region, X):
     tempNewY =[]
     newFieldNames = []
     newFieldNames.append('ID')
-    for l in range(len(X.keys())):
+    for l in range(len(list(X.keys()))):
         m = 0
-        for m in range (len(X[X.keys()[l]])):
-            operation = X[X.keys()[l]][m]
+        for m in range (len(X[list(X.keys())[l]])):
+            operation = X[list(X.keys())[l]][m]
             if operation == 'sum':
-                tempNewY.append(sumLists(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_Sum')
+                tempNewY.append(sumLists(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_Sum')
             elif operation == 'mean':
-                tempNewY.append(meanLists(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_Mean')
+                tempNewY.append(meanLists(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_Mean')
             elif operation == 'min':
-                tempNewY.append(minimum(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_Min')
+                tempNewY.append(minimum(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_Min')
             elif operation == 'max':
-                tempNewY.append(maximum(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_Max')
+                tempNewY.append(maximum(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_Max')
             elif operation == 'meanDesv':
-                tempNewY.append(meanDesv(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_MeanDesv')
+                tempNewY.append(meanDesv(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_MeanDesv')
             elif operation == 'stdDesv':
-                tempNewY.append(stdDesv(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_StdDesv')
+                tempNewY.append(stdDesv(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_StdDesv')
             elif operation == 'med':
-                tempNewY.append(median(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_Med')
+                tempNewY.append(median(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_Med')
             elif operation == 'mode':
-                tempNewY.append(mode(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_Mode')
+                tempNewY.append(mode(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_Mode')
             elif operation == 'range':
-                tempNewY.append(rangeRegion(auxiliar2, fields.index(fieldnames.index(X.keys()[l]))))
-                newFieldNames.append(X.keys()[l] + '_Range')
+                tempNewY.append(rangeRegion(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l]))))
+                newFieldNames.append(list(X.keys())[l] + '_Range')
             elif operation == 'first':
-                tempNewY.append(findFirstLast(auxiliar2, fields.index(fieldnames.index(X.keys()[l])), 'first'))
-                newFieldNames.append(X.keys()[l] + '_First')
+                tempNewY.append(findFirstLast(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l])), 'first'))
+                newFieldNames.append(list(X.keys())[l] + '_First')
             elif operation == 'last':
-                tempNewY.append(findFirstLast(auxiliar2, fields.index(fieldnames.index(X.keys()[l])), 'last'))
-                newFieldNames.append(X.keys()[l] + '_Last')
+                tempNewY.append(findFirstLast(auxiliar2, fields.index(fieldnames.index(list(X.keys())[l])), 'last'))
+                newFieldNames.append(list(X.keys())[l] + '_Last')
             elif operation == 'numberOfAreas':
                 tempNewY.append(numberAreas(region))
-                newFieldNames.append(X.keys()[l] + '_AreasPerRegion')
+                newFieldNames.append(list(X.keys())[l] + '_AreasPerRegion')
             else :
                 raise NameError("The selected operation (%s) is not defined" % operation)
     i = 0
@@ -190,7 +194,7 @@ def meanLists(alist, number):
         sum1 = 0
         for j in range(len(alist[i][number])):
             sum1 += alist[i][number][j]
-        mean = (float)(sum1)/len(alist[i][number])
+        mean = old_div((float)(sum1),len(alist[i][number]))
         results.append(mean)
     return results
     
@@ -290,9 +294,9 @@ def median(alist, number):
             temp.append(alist[i][number][j])
         temp.sort()
         if len(temp)%2 == 0 :
-            median = (temp[len(temp) / 2] + temp[len(temp) / 2 - 1]) / 2.0
+            median = (temp[old_div(len(temp), 2)] + temp[old_div(len(temp), 2) - 1]) / 2.0
         else :
-            median = (int)(temp[len(temp) / 2])
+            median = (int)(temp[old_div(len(temp), 2)])
         results.append(median)
     return results
     
@@ -340,7 +344,7 @@ def stdDesv(alist, number):
         sum1 = 0
         for j in range(len(alist[i][number])) :
             sum1 += (alist[i][number][j] - meanList[i]) ** 2
-        results.append(((float(sum1)) / (len(alist[i][number]) - 1)) ** 0.5)
+        results.append((old_div((float(sum1)), (len(alist[i][number]) - 1))) ** 0.5)
     return results
 
 def meanDesv(alist, number) :
@@ -364,7 +368,7 @@ def meanDesv(alist, number) :
         sum1 = 0
         for j in range(len(alist[i][number])) :
             sum1 += abs(alist[i][number][j] - meanList[i])
-        results.append((float(sum1)) / (len(alist[i][number])))
+        results.append(old_div((float(sum1)), (len(alist[i][number]))))
     return results
 
 def numberAreas(region):

@@ -1,6 +1,10 @@
 # encoding: latin2
 """global inequality change test
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,7 +14,7 @@ __email__ = "contacto@rise-group.org"
 
 __all__ = ['globalInequalityTest']
 
-from theilIndex import theil 
+from .theilIndex import theil 
 import numpy
 
 def globalInequalityChanges(Y, fieldNames, outFile, permutations=9999):
@@ -52,9 +56,9 @@ def globalInequalityChanges(Y, fieldNames, outFile, permutations=9999):
             result[k] = [possibilities[numpy.random.randint(0,2)]]
         return result    
 
-    print "Creating global Inequality Changes [Rey_Sastre2010 - Table 2]"
+    print("Creating global Inequality Changes [Rey_Sastre2010 - Table 2]")
     results = {}
-    r2a = range(len(Y))
+    r2a = list(range(len(Y)))
     for nv1, var1 in enumerate(fieldNames):
         var = getVar(Y,nv1)
         t1,tb1,tw1 = theil(var,r2a)
@@ -86,5 +90,5 @@ def globalInequalityChanges(Y, fieldNames, outFile, permutations=9999):
             line = line.replace("'","")
             fout.write("".join([line,"\n"]))
         fout.close()        
-    print "global Inequality Changes created!"
+    print("global Inequality Changes created!")
     return results                

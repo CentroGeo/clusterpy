@@ -1,6 +1,7 @@
 # encoding: latin1
 """createVariable
 """
+from builtins import str
 __author__ = "Juan C. Duque, Alejandro Betancourt, Juan Sebastian Marín"
 __credits__ = "Copyright (c) 2010-11 Juan C. Duque"
 __license__ = "New BSD License"

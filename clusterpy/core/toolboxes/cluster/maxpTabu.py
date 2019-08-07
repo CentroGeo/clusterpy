@@ -1,6 +1,11 @@
 # encoding: latin2
 """Max-P-regions
 """
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from past.utils import old_div
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -11,9 +16,9 @@ __email__ = "contacto@rise-group.org"
 import copy
 import numpy
 import time as tm
-from componentsAlg import AreaManager
-from componentsAlg import BasicMemory
-from componentsAlg import RegionMaker
+from .componentsAlg import AreaManager
+from .componentsAlg import BasicMemory
+from .componentsAlg import RegionMaker
 
 __all__ = ['execMaxpTabu']
 
@@ -72,10 +77,10 @@ def execMaxpTabu(y, w, threshold=100.0, maxit=2, tabuLength=5, typeTabu="exact")
     'mode','range','first','last','numberOfAreas. By deffault just
     ID variable is added to the dissolved map.
     """
-    print "Running max-p-regions model (Duque, Anselin and Rey, 2010)"
-    print "Local search method: Tabu Search"
-    print "Number of areas: ", len(y)
-    print "threshold value: ", threshold
+    print("Running max-p-regions model (Duque, Anselin and Rey, 2010)")
+    print("Local search method: Tabu Search")
+    print("Number of areas: ", len(y))
+    print("threshold value: ", threshold)
     distanceType = "EuclideanSquared"
     distanceStat = "Centroid";
     objectiveFunctionType = "SS";
@@ -125,7 +130,7 @@ def execMaxpTabu(y, w, threshold=100.0, maxit=2, tabuLength=5, typeTabu="exact")
 
     #   print "bestCandidates", bestCandidates
 
-    ofValues = bestCandidates.keys()
+    ofValues = list(bestCandidates.keys())
     basicMemory = BasicMemory()
     while len(ofValues) >= 1:
 
@@ -170,7 +175,7 @@ def execMaxpTabu(y, w, threshold=100.0, maxit=2, tabuLength=5, typeTabu="exact")
         #  LOCAL SEARCH
 
         rm.calcObj()
-        convTabu = min(10,len(y)/maxP)  #   convTabu=230*numpy.sqrt(maxP)
+        convTabu = min(10,old_div(len(y),maxP))  #   convTabu=230*numpy.sqrt(maxP)
 
         #  print "###ENTERING TABU",rm.objInfo,rm.returnRegions()
 
@@ -185,8 +190,8 @@ def execMaxpTabu(y, w, threshold=100.0, maxit=2, tabuLength=5, typeTabu="exact")
     time = tm.time() - start
     Sol = basicMemory.regions
     Of = basicMemory.objInfo
-    print "FINAL SOLUTION: ", Sol
-    print "FINAL OF: ", Of
+    print("FINAL SOLUTION: ", Sol)
+    print("FINAL OF: ", Of)
     output = { "objectiveFunction": Of,
         "runningTime": time,
         "algorithm": "maxpTabu",
@@ -196,7 +201,7 @@ def execMaxpTabu(y, w, threshold=100.0, maxit=2, tabuLength=5, typeTabu="exact")
         "distanceStat": distanceStat,
         "selectionType": selectionType,
         "ObjectiveFuncionType": objectiveFunctionType}
-    print "Done"
+    print("Done")
     return output
 
 

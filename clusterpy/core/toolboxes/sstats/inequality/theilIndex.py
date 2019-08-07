@@ -40,13 +40,13 @@ def theil(var, area2region):
     region2area = {}
     regionsY = {}
     for area,region in enumerate(area2region):
-        if region2area.has_key(region):
+        if region in region2area:
             region2area[region].append(area)
             regionsY[region] += var[area][0]
         else:
             region2area[region] = [area]
             regionsY[region] = var[area][0]
-    totalY = sum([x[0] for x in var.values()])
+    totalY = sum([x[0] for x in list(var.values())])
     t_b = 0
     t_w = 0
     for region in regionsY:

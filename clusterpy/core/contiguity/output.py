@@ -1,6 +1,8 @@
 # encoding: latin2
 """ Exporting contiguity matrix in different formats
 """
+from __future__ import print_function
+from builtins import str
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2010-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -53,7 +55,7 @@ def dict2gal(wDict,idvar,fileName):
         china.customW = clusterpy.importGWT("clusterpy/data_examples/china_gwt_658.193052")
         china.exportGALW("chinaW", wtype='custom')
     """
-    print "Writing GAL file"
+    print("Writing GAL file")
     fout = open(fileName + ".gal","w")
     fout.write("".join(["0 ",str(len(idvar))," ",fileName,"\n"]))
     for id in wDict:
@@ -65,7 +67,7 @@ def dict2gal(wDict,idvar,fileName):
             line.append(str(int(idvar[n][0])) + " ")
         line = "".join(line + ["\n"])  
         fout.write(line)
-    print "GAL successfully created"
+    print("GAL successfully created")
     fout.close()
 
 
@@ -102,7 +104,7 @@ def dict2csv(wDict,idvar,fileName,standarize=False):
     line = ",".join(fieldNames)
     fout.write(line + "\n")
     data = []
-    nAreas = len(wDict.keys())
+    nAreas = len(list(wDict.keys()))
     for i in wDict:
         data.append([fieldNames[i+1]] + [0]*nAreas)
         ne = len(wDict[i])
@@ -114,4 +116,4 @@ def dict2csv(wDict,idvar,fileName,standarize=False):
         line = [str(x) for x in data[i]]
         line = ",".join(line)
         fout.write(line + "\n")
-    print "CSV successfully created"
+    print("CSV successfully created")

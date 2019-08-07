@@ -2,6 +2,9 @@
 """similarity Coefficient
 G{packagetree core}
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -11,7 +14,7 @@ __email__ = "contacto@rise-group.org"
 
 import numpy
 import time as tm
-from componentsESDA import absDifference
+from .componentsESDA import absDifference
 
 __all__ = ['similarityCoef']
 
@@ -64,6 +67,6 @@ def similarityCoef(*args):
             simcw[j][i] = simc[(i, j)]
             j = j + 1
         i = i + 1
-    print "SIMC has been succesfuly calculed"
+    print("SIMC has been succesfuly calculed")
     return simc, simcw
 

@@ -2,6 +2,7 @@
 """ESDA components
 G{packagetree core}
 """
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"

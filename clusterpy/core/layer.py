@@ -1,6 +1,14 @@
 # encoding: latin2
 """Repository of clusterPy's main class "Layer"
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -11,74 +19,74 @@ __all__ = ['Layer']
                  
 
 import copy
-import cPickle
+import pickle
 import numpy
 import os
 import re
 import time
 import itertools
 
-from data import generateSAR
-from data import generateSMA
-from data import generateCAR
-from data import generateSpots
-from data import generatePositiveSpots
-from data import generateUniform
-from data import generateGBinomial
-from data import generateLBinomial
-from data import dissolveData
-from data import fieldOperation
-from data import spatialLag
+from .data import generateSAR
+from .data import generateSMA
+from .data import generateCAR
+from .data import generateSpots
+from .data import generatePositiveSpots
+from .data import generateUniform
+from .data import generateGBinomial
+from .data import generateLBinomial
+from .data import dissolveData
+from .data import fieldOperation
+from .data import spatialLag
 
-from geometry import dissolveLayer
-from geometry import transportLayer
-from geometry import expandLayer
-from geometry import getBbox
-from geometry import getGeometricAreas
-from geometry import getCentroids
+from .geometry import dissolveLayer
+from .geometry import transportLayer
+from .geometry import expandLayer
+from .geometry import getBbox
+from .geometry import getGeometricAreas
+from .geometry import getCentroids
 
 # Clustering
-from toolboxes import execAZP
-from toolboxes import execArisel
-from toolboxes import execAZPRTabu
-from toolboxes import execAZPSA
-from toolboxes import execAZPTabu
-from toolboxes import execRandom
-from toolboxes.cluster.pRegionsExact import execPregionsExact
-from toolboxes.cluster.pRegionsExactCP import execPregionsExactCP
-from toolboxes.cluster.minpOrder import execMinpOrder
-from toolboxes.cluster.minpFlow import execMinpFlow
-from toolboxes import execMaxpTabu
-from toolboxes import execAMOEBA
-from toolboxes import originalSOM
-from toolboxes import geoSom
-from toolboxes import geoAssociationCoef
-from toolboxes import redistributionCoef
-from toolboxes import similarityCoef
+from .toolboxes import execAZP
+from .toolboxes import execArisel
+from .toolboxes import execAZPRTabu
+from .toolboxes import execAZPSA
+from .toolboxes import execAZPTabu
+from .toolboxes import execRandom
+from .toolboxes.cluster.pRegionsExact import execPregionsExact
+from .toolboxes.cluster.pRegionsExactCP import execPregionsExactCP
+from .toolboxes.cluster.minpOrder import execMinpOrder
+from .toolboxes.cluster.minpFlow import execMinpFlow
+from .toolboxes import execMaxpTabu
+from .toolboxes import execAMOEBA
+from .toolboxes import originalSOM
+from .toolboxes import geoSom
+from .toolboxes import geoAssociationCoef
+from .toolboxes import redistributionCoef
+from .toolboxes import similarityCoef
 
 
 # Irregular Maps
 try:
-    from toolboxes import topoStatistics
-    from toolboxes import noFrontiersW
+    from .toolboxes import topoStatistics
+    from .toolboxes import noFrontiersW
 except:
     pass
 
 # Spatial statistics
-from toolboxes import globalInequalityChanges
-from toolboxes import inequalityMultivar
-from toolboxes import interregionalInequalityTest
-from toolboxes import interregionalInequalityDifferences
+from .toolboxes import globalInequalityChanges
+from .toolboxes import inequalityMultivar
+from .toolboxes import interregionalInequalityTest
+from .toolboxes import interregionalInequalityDifferences
 
 
-from outputs import dbfWriter
-from outputs import shpWriterDis
-from outputs import csvWriter
+from .outputs import dbfWriter
+from .outputs import shpWriterDis
+from .outputs import csvWriter
 
 # Contiguity function
-from contiguity import dict2matrix 
-from contiguity import dict2gal
-from contiguity import dict2csv
+from .contiguity import dict2matrix 
+from .contiguity import dict2gal
+from .contiguity import dict2csv
 
 # Layer
 # Layer.dissolveMap
@@ -100,7 +108,7 @@ from contiguity import dict2csv
 # Layer.exportOutputs
 # Layer.transport
 # Layer.expand
-class Layer():
+class Layer(object):
     """Main class in clusterPy
 
     It is an object that represents an original map and all the
@@ -203,11 +211,11 @@ class Layer():
 
         
         """
-        print "Dissolving lines"
+        print("Dissolving lines")
         sh = Layer()
         if var is not None:
             if var in self.fieldNames:
-                region2areas = map(lambda x: x[0],self.getVars(var).values())
+                region2areas = [x[0] for x in list(self.getVars(var).values())]
                 dissolveLayer(self, sh, region2areas)
                 sh.outputDissolve = {"objectiveFunction": "Unknown",\
                 "runningTime": "Unknown", "aggregationVariables": "Unknown",\
@@ -233,7 +241,7 @@ class Layer():
                 sh.outputDissolve = dissolveInfo
                 sh.Y,sh.fieldNames = dissolveData(self.fieldNames, self.Y,
                                                       self.region2areas, dataOperations)
-        print "Done"
+        print("Done")
 
     def getVars(self, *args):
         """Getting subsets of data
@@ -255,7 +263,7 @@ class Layer():
             china = clusterpy.importArcData("clusterpy/data_examples/china")
             subset = china.getVars(["Y1998", "Y1997"])
         """
-        print "Getting variables"
+        print("Getting variables")
         fields = []
         for argument in args:
             if isinstance(argument, list):
@@ -266,14 +274,14 @@ class Layer():
         labels = self.fieldNames
         count = 0
         subY = {}
-        for i in self.Y.keys():
+        for i in list(self.Y.keys()):
             subY[i] = []
         for j in fields:
             for i in range(len(labels)):
                 if labels[i] == j:
-                    for j in self.Y.keys():
+                    for j in list(self.Y.keys()):
                         subY[j] = subY[j] + [self.Y[j][i]]
-        print "Variables successfully extracted"
+        print("Variables successfully extracted")
         return subY
 
     def addVariable(self, names, values):
@@ -307,7 +315,7 @@ class Layer():
             chinaData = clusterpy.importCSV("clusterpy/data_examples/china.csv")
             china.addVariable(chinaData[1],chinaData[0])
         """
-        print "Adding variables"
+        print("Adding variables")
         self.fieldNames += (names)
         for area in range(len(values)):
             if area in self.Y:
@@ -317,7 +325,7 @@ class Layer():
                     self.Y[area] += values[area]
             else:
                 self.Y[area] = [values[area]]
-        print "Done"
+        print("Done")
 
     def spatialLag(self,variables,wtype="queen"):
         """Spatial lag of a set of variables
@@ -345,7 +353,7 @@ class Layer():
         elif wtype == 'queen':
             w = self.Wqueen
         else:
-            print "Contiguity type is not supported"
+            print("Contiguity type is not supported")
         
         wmatrix = dict2matrix(w,std=1,diag=0)
         data = self.getVars(*variables)
@@ -492,12 +500,12 @@ class Layer():
             china.generateData("Uniform", 'queen', 1, 1, 10, integer=1)
         """
         fields = []
-        print "Generating " + process
+        print("Generating " + process)
         if wtype == 'rook':
             w = self.Wrook
         else:
             w = self.Wqueen
-        if kargs.has_key("integer"):
+        if "integer" in kargs:
             integer = kargs["integer"]
         else:
             integer = 0
@@ -511,16 +519,16 @@ class Layer():
             y = generateCAR(w, n, *args)
             fields.extend(['CAR'+ str(i + len(self.fieldNames)) for i in range(n)])
         elif process == 'Spots':
-            ylist = [generateSpots(w, *args) for i in xrange(n)]
+            ylist = [generateSpots(w, *args) for i in range(n)]
             fields.extend(['Spots' + str(i + len(self.fieldNames)) for i in range(n)])
             y = {}
-            for i in xrange(len(w)):
+            for i in range(len(w)):
                 y[i] = [x[i][0] for x in ylist]
         elif process == 'positive_spots':
-            ylist = [generatePositiveSpots(w, *args) for i in xrange(n)]
+            ylist = [generatePositiveSpots(w, *args) for i in range(n)]
             fields.extend(['pspots' + str(i + len(self.fieldNames)) for i in range(n)])
             y = {}
-            for i in xrange(len(w)):
+            for i in range(len(w)):
                 y[i] = [x[i][0] for x in ylist]
         elif process == 'Uniform':
             y = generateUniform(w, n, *args)
@@ -537,14 +545,14 @@ class Layer():
             y = generateLBinomial(n, y_pob, y_pro)
             fields.extend(['Bino' + str(i + len(self.fieldNames)) for i in range(n)])
 
-        for i in self.Y.keys():
+        for i in list(self.Y.keys()):
             if integer == 1:
                 self.Y[i] = self.Y[i] + [int(z) for z in y[i]]
             else:
                 self.Y[i] = self.Y[i] + y[i]
 
         self.fieldNames.extend(fields)
-        print "Done [" + process + "]" 
+        print("Done [" + process + "]") 
         
     def dataOperation(self,function):
         """
@@ -590,8 +598,8 @@ class Layer():
                 raise NameError("Variable " + str(fieldName) + " already exists")
             function = m.group(2)
             newVariable = fieldOperation(function, self.Y, self.fieldNames)
-            print "Adding " + fieldName + " to fieldNames"
-            print "Adding values from " + function + " to Y"
+            print("Adding " + fieldName + " to fieldNames")
+            print("Adding values from " + function + " to Y")
             self.addVariable([fieldName], newVariable)
         else:
             raise NameError("Function is not well structured, it must include variable\
@@ -609,10 +617,10 @@ Name followed by = signal followed by the fieldOperations")
             china = clusterpy.importArcData("clusterpy/data_examples/china")
             china.resetData()
         """
-        for i in self.Y.keys():
+        for i in list(self.Y.keys()):
             self.Y[i] = [i]
         self.fieldNames = ['ID']
-        print "Done"
+        print("Done")
     
     def cluster(*args, **kargs):
         """
@@ -1168,7 +1176,7 @@ Name followed by = signal followed by the fieldOperations")
         self = args[0]
         algorithm = args[1]
         # Extracting W type from arguments
-        if kargs.has_key('wType'):
+        if 'wType' in kargs:
             wType = kargs['wType']
             kargs.pop('wType')
         else:
@@ -1181,17 +1189,17 @@ Name followed by = signal followed by the fieldOperations")
         else:
             algorithmW = self.Wrook
         # Extracting standardize variables
-        if kargs.has_key('std'):
+        if 'std' in kargs:
             std = kargs.pop('std')
         else:
             std = 0
         # Setting dissolve according to requirement
-        if kargs.has_key("dissolve"):
+        if "dissolve" in kargs:
             dissolve = kargs.pop('dissolve')
         else:
             dissolve = 0
         # Extracting dataOperations
-        if kargs.has_key("dataOperations"):
+        if "dataOperations" in kargs:
             dataOperations = kargs.pop("dataOperations")
         else:
             dataOperations = {}
@@ -1199,8 +1207,8 @@ Name followed by = signal followed by the fieldOperations")
         if algorithm in ["geoSom","amoeba","som"]:
             dissolve = 0
             dataOperations = {}
-            print "The parameters ""dissolve"" and ""dataOperations"" is not available for the this \
-algorithm" 
+            print("The parameters ""dissolve"" and ""dataOperations"" is not available for the this \
+algorithm") 
 
         if algorithm == "geoSom":
             fieldNames = tuple(args[2])
@@ -1210,12 +1218,12 @@ algorithm"
             algorithmY = self.getVars(*fieldNames)
             if std==1:
                 for nn,name in enumerate(fieldNames):
-                    values = [i[0] for i in self.getVars(name).values()]
+                    values = [i[0] for i in list(self.getVars(name).values())]
                     mean_value = numpy.mean(values)
                     std_value = numpy.std(values)
                     newVar = fieldOperation("( " + name + " - " + str(mean_value) + ")/float(" + str(std_value) + ")", algorithmY, fieldNames)
                     for nv,val in enumerate(newVar):
-						algorithmY[nv][nn] = val
+                        algorithmY[nv][nn] = val
                 # Adding original population to de algortihmY
                 if algorithm == "maxpTabu":
                     population = fieldNames[-1]
@@ -1313,7 +1321,7 @@ algorithm"
         auxline = auxline.replace("]","")
         auxline = auxline.replace("'","")
         header = "".join(["#shocks,shocks,shock,",auxline,"\n"])
-        auxline = str(range(len(self.areas)))
+        auxline = str(list(range(len(self.areas))))
         auxline = auxline.replace("[","")
         auxline = auxline.replace("]","")
         header_a2r = "".join(["#shocks,shocks,shock,",auxline,"\n"])
@@ -1502,7 +1510,7 @@ be a shock period")
             variables = args[2]
             area2region = args[3]
             Y = self.getVars(*variables)
-            area2region = [x[0] for x in self.getVars(area2region).values()]
+            area2region = [x[0] for x in list(self.getVars(area2region).values())]
             args = (Y,area2region)
             result = inequalityMultivar(*args,**kargs)
         elif algorithm == 'interregionalInequalityTest':
@@ -1519,7 +1527,7 @@ be a shock period")
             outFile = args[4]
             Y = self.getVars(*fieldNames)
             area2regions = self.getVars(area2region)
-            area2regions = zip(*area2regions.values())
+            area2regions = list(zip(*list(area2regions.values())))
             args = (Y,fieldNames,area2regions,area2region,outFile)
             result = interregionalInequalityDifferences(*args,**kargs)
         return result
@@ -1587,10 +1595,10 @@ be a shock period")
             china = clusterpy.importArcData("clusterpy/data_examples/china")
             china.exportArcData("china")
         """
-        print "Writing ESRI files"
+        print("Writing ESRI files")
         shpWriterDis(self.areas, filename, self.shpType)
         self.exportDBFY(filename)
-        print "ESRI files created"
+        print("ESRI files created")
 
     def exportDBFY(self, fileName, *args):    
         """Exports the database file
@@ -1606,7 +1614,7 @@ be a shock period")
             clusterpy.importArcData("clusterpy/data_examples/china")
             china.exportDBFY("china")
         """
-        print "Writing DBF file"
+        print("Writing DBF file")
         if args != ():
             Y = self.getVars(self, *args) 
             fieldNames = args
@@ -1621,16 +1629,16 @@ be a shock period")
                 fieldspecs.append(('C', 10, 0))
             else:
                 fieldspecs.append(('N', 10, 3))
-        records = range(len(Y))
-        for i in xrange(len(Y)):
+        records = list(range(len(Y)))
+        for i in range(len(Y)):
             if len(fieldNames) == 2:
                 records[i] = []
-                records[i] = records[i] + Y.values()[i]
+                records[i] = records[i] + list(Y.values())[i]
             else:
                 records[i] = []
-                records[i] = records[i] + Y.values()[i]
+                records[i] = records[i] + list(Y.values())[i]
         dbfWriter(fieldNames, fieldspecs, records, fileName + '.dbf')
-        print "Done"
+        print("Done")
 
     def exportCSVY(self, fileName, *args):
         """Exports layers data on .csv file
@@ -1646,16 +1654,16 @@ be a shock period")
             china = clusterpy.importArcData("clusterpy/data_examples/china")
             china.exportCSVY("ChinaCSV")
         """
-        print "Writing CSV files"
+        print("Writing CSV files")
         if args != ():
             Y = self.getVars(self, *args) 
             fieldNames = args
         else:
             Y = self.Y
             fieldNames = self.fieldNames
-        records = Y.values()
+        records = list(Y.values())
         csvWriter(fileName, fieldNames, records)
-        print "Done"
+        print("Done")
 
     def exportGALW(self, fileName, wtype='rook', idVariable='ID'):
         """        
@@ -1697,7 +1705,7 @@ be a shock period")
             china.customW = clusterpy.importGWT("clusterpy/data_examples/china_gwt_658.193052")
             china.exportGALW("chinaW", wtype='custom')
         """
-        print "Writing GAL file"
+        print("Writing GAL file")
         if wtype == 'rook':
             nw = self.Wrook
         elif wtype == 'queen':
@@ -1737,7 +1745,7 @@ be a shock period")
             china.exportCSVW("chinaW", wtype='queen')
 
         """
-        print "Writing CSV file"
+        print("Writing CSV file")
         if wtype == 'rook':
             nw = copy.deepcopy(self.Wrook)
         elif wtype == 'queen':
@@ -1766,24 +1774,24 @@ be a shock period")
         """
         f = open(filename, 'w')
         #try:
-        print "Writing outputs to the CSV"
+        print("Writing outputs to the CSV")
         key0 = 'none'
         cont = 0
         while key0 == 'none' or key0 == "r2aRoot" or key0 == "r2a":
-            key0 = self.outputCluster.keys()[cont]
+            key0 = list(self.outputCluster.keys())[cont]
             cont += 1
-        headers = self.outputCluster[key0].keys()
+        headers = list(self.outputCluster[key0].keys())
         line = ''
         for header in headers:
             line +=  header + ';'
         f.write(line[0: -1] + '\n')
-        for key in self.outputCluster.keys():
+        for key in list(self.outputCluster.keys()):
             line = ''
             for header in headers:
                 if (key != 'r2a' and key != 'r2aRoot'):
                     line += str(self.outputCluster[key][header]) + ';'  
             f.write(line[0: -1] + '\n')
-        print "Outputs successfully exported"
+        print("Outputs successfully exported")
         #except:
         #    raise NameError("No algorithm has been run")
         f.close()
@@ -1801,17 +1809,17 @@ be a shock period")
             china = clusterpy.importArcData("clusterpy/data_examples/china")
             china.exportRegions2area('region2area')
         """
-        print "Writing region2areas"
+        print("Writing region2areas")
         f = open(filename, 'w')
-        data = self.getVars(self.outputCluster.keys())
-        for area in data.keys():
+        data = self.getVars(list(self.outputCluster.keys()))
+        for area in list(data.keys()):
             line = str(area) + ';'
             regions = data[area]
             for region in regions:
                 line += str(region) + ';'  
             f.write(line[0: -1] + '\n')
         f.close()
-        print "region2areas successfully saved"
+        print("region2areas successfully saved")
 
     def transport(self, xoffset, yoffset):
         """
@@ -1829,9 +1837,9 @@ be a shock period")
             clusterpy.importArcData("clusterpy/data_examples/china")
             china.transport(100, 100)
         """
-        print "Changing coordinates"
+        print("Changing coordinates")
         transportLayer(self, xoffset, yoffset)
-        print "Done"
+        print("Done")
         
     def expand(self, xproportion, yproportion):
         """
@@ -1849,9 +1857,9 @@ be a shock period")
             china = clusterpy.importArcData("clusterpy/data_examples/china")
             china.expand(100, 100)
         """
-        print "Changing coordinates"
+        print("Changing coordinates")
         expandLayer(self, xproportion, yproportion)
-        print "Done"
+        print("Done")
 
     def getGeometricAreas(self):
         """

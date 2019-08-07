@@ -1,6 +1,9 @@
 # encoding: latin2
 """Self Organizing Maps
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -17,8 +20,8 @@ sys.path += [path]
 import copy
 import inputs
 import time as tm
-from componentsAlg import geoSomManager
-from componentsAlg import somManager
+from .componentsAlg import geoSomManager
+from .componentsAlg import somManager
 
 __all__ = ['geoSom']
 
@@ -74,9 +77,9 @@ def geoSom(iLayer,iVariables,
     additional variable with the solution vector (i.e., ID of the region to
     which the area has been assigned).
     """
-    print "Geo-Som"
+    print("Geo-Som")
     start = tm.time()
-    print "---Generating geo SOM topology---" 
+    print("---Generating geo SOM topology---") 
     bbox = iLayer.bbox
     oLayer = inputs.createGrid(nRows,nCols,
                                (bbox[0],bbox[1]),
@@ -102,8 +105,8 @@ def geoSom(iLayer,iVariables,
     time = tm.time() - start
     Sol = manager.compressSolution(solution)
     Of = 0
-    print "FINAL SOLUTION: ", Sol
-    print "FINAL O.F.: ", Of
+    print("FINAL SOLUTION: ", Sol)
+    print("FINAL O.F.: ", Of)
     output = { "objectiveFunction": Of,
     "runningTime": time,
     "algorithm": "geoSOM",
@@ -114,7 +117,7 @@ def geoSom(iLayer,iVariables,
     "selectionType": None,
     "ObjectiveFuncionType": None,
     "SOMOutputLayer": manager.outputLayer}
-    print "Done"
-    if fileName <> None:
+    print("Done")
+    if fileName != None:
         manager.outputLayer.exportArcData(fileName)
     return output

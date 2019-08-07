@@ -1,6 +1,9 @@
 # encoding: latin2
 """AZP-SA
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,8 +13,8 @@ __email__ = "contacto@rise-group.org"
 
 import numpy
 import time as tm
-from componentsAlg import AreaManager
-from componentsAlg import RegionMaker
+from .componentsAlg import AreaManager
+from .componentsAlg import RegionMaker
 
 __all__ = ['execAZPSA']
 
@@ -85,21 +88,21 @@ def execAZPSA(y, w, pRegions, initialSolution=[], maxit=1):
     ID variable is added to the dissolved map.
 
     """
-    print "Running original AZP-SA algorithm (Openshaw and Rao, 1995)"
-    print "Number of areas: ", len(y)
+    print("Running original AZP-SA algorithm (Openshaw and Rao, 1995)")
+    print("Number of areas: ", len(y))
     if initialSolution != []:
-        print "Number of regions: ", len(numpy.unique(initialSolution))
+        print("Number of regions: ", len(numpy.unique(initialSolution)))
         pRegions = len(numpy.unique(initialSolution))
     else:
-        print "Number of regions: ", pRegions
-    print "Boltzmann's equation: "
-    print "     R(0,1) < exp((-(Candidate Soution - Current Solution) / Current Solution)/T(k))"
-    print "Cooling schedule: T(k) = 0.85 T(k-1)"
+        print("Number of regions: ", pRegions)
+    print("Boltzmann's equation: ")
+    print("     R(0,1) < exp((-(Candidate Soution - Current Solution) / Current Solution)/T(k))")
+    print("Cooling schedule: T(k) = 0.85 T(k-1)")
     if pRegions >= len(y):
         message = "\n WARNING: You are aggregating "+str(len(y))+" into"+\
         str(pRegions)+" regions!!. The number of regions must be an integer"+\
         " number lower than the number of areas being aggregated"
-        raise Exception, message 
+        raise Exception(message) 
     
     distanceType = "EuclideanSquared" 
     distanceStat = "Centroid"
@@ -117,8 +120,8 @@ def execAZPSA(y, w, pRegions, initialSolution=[], maxit=1):
                     distanceStat=distanceStat,
                     selectionType=selectionType,
                     objectiveFunctionType=objectiveFunctionType)
-    print "initial solution: ", rm.returnRegions()
-    print "initial O.F: ", rm.objInfo
+    print("initial solution: ", rm.returnRegions())
+    print("initial O.F: ", rm.objInfo)
 
     #  LOCAL SEARCH
     rm.AZPSA(alpha, maxit)
@@ -126,8 +129,8 @@ def execAZPSA(y, w, pRegions, initialSolution=[], maxit=1):
     time = tm.time() - start
     Sol = rm.returnRegions()
     Of = rm.objInfo
-    print "FINAL SOLUTION: ", Sol
-    print "FINAL OF: ", Of
+    print("FINAL SOLUTION: ", Sol)
+    print("FINAL OF: ", Of)
     output = { "objectiveFunction": Of,
     "runningTime": time,
     "algorithm": "azpSa",
@@ -137,5 +140,5 @@ def execAZPSA(y, w, pRegions, initialSolution=[], maxit=1):
     "distanceStat": distanceStat,
     "selectionType": selectionType,
     "ObjectiveFuncionType": objectiveFunctionType}
-    print "Done"
+    print("Done")
     return output

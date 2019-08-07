@@ -1,6 +1,7 @@
 # encoding: latin2
 """Positive spots data module 
 """
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt, Jose L. Franco"
 __credits__ = "Copyright (c) 2010-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -43,14 +44,14 @@ def generatePositiveSpots(w, nc=4, compact=0.9, Zalpha=2.32):
     >>> china.generateData("positive_spots", 'queen', 1, 4, 0.7, 1.64, integer=1)
     """
     y = {}
-    N = len(w.keys())
+    N = len(list(w.keys()))
     posAreaNumber = 0
     avAreaNumber = 0
     negAreaNumber = 0
     PosAreas = []
     NegAreas = []
     avAreas = []
-    for i  in xrange(10000): # this cycle creates and classifies the N random numbers
+    for i  in range(10000): # this cycle creates and classifies the N random numbers
         num = abs(numpy.random.randn())
         if num > Zalpha:
             PosAreas.append(num)
@@ -87,7 +88,7 @@ def generatePositiveSpots(w, nc=4, compact=0.9, Zalpha=2.32):
             neighbors = w[SA]
             discNeighbors = set([])
             lastC = 2
-            while c < spines[i] and lastC <> c: # While the cluster is not yet
+            while c < spines[i] and lastC != c: # While the cluster is not yet
                 lastC = c
                 neighbors = list((set(neighbors) - allAddedAreas) - discNeighbors)
                 neighbors = numpy.random.permutation(neighbors)
@@ -107,7 +108,7 @@ def generatePositiveSpots(w, nc=4, compact=0.9, Zalpha=2.32):
             neighbors = set([])
             for r in LA: #Neighbors
                 neighbors = neighbors | set(w[r])
-            while c < AN[i] and lastC <> c: # while cluster is not yet
+            while c < AN[i] and lastC != c: # while cluster is not yet
                 lastC = c
                 neighbors = list(set(neighbors) - allAddedAreas)
                 neighbors = numpy.random.permutation(neighbors)

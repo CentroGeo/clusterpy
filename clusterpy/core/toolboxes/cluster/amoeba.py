@@ -1,6 +1,10 @@
 # encoding: latin2
 """AMOEBA
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt, Jose L. Franco"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,7 +14,7 @@ __email__ = "contacto@rise-group.org"
 
 import time as tm
 import numpy
-from componentsAlg import calculateGetisG,quickSort2,neighborSort 
+from .componentsAlg import calculateGetisG,quickSort2,neighborSort 
 
 __all__ = ['execAMOEBA']
 
@@ -54,17 +58,17 @@ def execAMOEBA(y, w, significance=0.01):
     the clusters.
     """
     start = tm.time()
-    print "Running computationally efficient AMOEBA (Duque et al., 2010)"
-    print "Number of areas: ", len(y)
+    print("Running computationally efficient AMOEBA (Duque et al., 2010)")
+    print("Number of areas: ", len(y))
     NumberOfClusters = 0
-    areaKeys = y.keys() 
-    dataMean = numpy.mean(numpy.double(y.values()))
-    dataStd = numpy.std(numpy.double(y.values()))
+    areaKeys = list(y.keys()) 
+    dataMean = numpy.mean(numpy.double(list(y.values())))
+    dataStd = numpy.std(numpy.double(list(y.values())))
     dataLength = len(y)
     generatedClusters = dict()
     clusterGValues = dict()
     clusterGValuesAbs = dict()
-    print "Starting iterative process"
+    print("Starting iterative process")
     for s in areaKeys:
         discNeighbor = []
         if s in w:
@@ -107,10 +111,10 @@ def execAMOEBA(y, w, significance=0.01):
     output = {}
     clusterMap = {}
     mapCounter = 0
-    areaRange = range(dataLength)    
+    areaRange = list(range(dataLength))    
     randomKeyList = []
     clusterCounter = 0
-    print "Testing clusters significance"
+    print("Testing clusters significance")
     for i in range(1000):
         randomKeyListInstance = []
         randomList = numpy.random.permutation(areaRange)
@@ -158,7 +162,7 @@ def execAMOEBA(y, w, significance=0.01):
                     else:
                         output[h] = clustId
                 clusterCounter=clusterCounter + 1
-    Sol = output.values()
+    Sol = list(output.values())
     Of = 0
     time = tm.time() - start
     output = { "objectiveFunction": Of,
@@ -170,9 +174,9 @@ def execAMOEBA(y, w, significance=0.01):
     "distanceStat": None,
     "selectionType": None,
     "ObjectiveFuncionType": None} 
-    print "FINAL SOLUTION: " + str(Sol)
-    print ">= 1  : cluster of high values"
-    print "== 0  : outside of cluster"
-    print "<= -1 : cluster of low values"
-    print "Done"
+    print("FINAL SOLUTION: " + str(Sol))
+    print(">= 1  : cluster of high values")
+    print("== 0  : outside of cluster")
+    print("<= -1 : cluster of low values")
+    print("Done")
     return output

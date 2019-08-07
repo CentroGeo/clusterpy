@@ -1,4 +1,12 @@
-from mrpolygons import mrpolygon, scalePolygon, polarPolygon2cartesian, transportPolygonGeometry, transportPolygon
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import zip
+from builtins import range
+from builtins import object
+from past.utils import old_div
+from .mrpolygons import mrpolygon, scalePolygon, polarPolygon2cartesian, transportPolygonGeometry, transportPolygon
 import Polygon
 Polygon.setTolerance(1e-3)
 from Polygon import Polygon
@@ -24,7 +32,7 @@ def line2mpointsIntersection(line,mpoints,tol):
         intersection = result.sort(key=lambda x: Point(line.coords[0]).distance(Point(x)))
     return result
 
-class rimap():
+class rimap(object):
     def __init__(self,n=3600,N=30,alpha=[0.1,0.5],sigma=[1.1,1.4],dt=0.1,pg=0.01,pu=0.05,su=0.315,boundary=""):
         """Creates an irregular maps
 
@@ -69,7 +77,7 @@ class rimap():
         if boundary == "":
             a,r,sa,sr,X1,times = mrpolygon(alp,sig,self.mu,self.X_0,self.dt,self.N)
             sa,sr = scalePolygon(sa,sr,1000)
-            polygon = polarPolygon2cartesian(zip(sa,sr))
+            polygon = polarPolygon2cartesian(list(zip(sa,sr)))
         else:
             layer = boundary
             polygon = layer.areas[0][0]
@@ -85,7 +93,7 @@ class rimap():
             if a[-1] != a[0]:
                 a.append(a[0])
             self.carteAreas.append([a])
-        print "closing: " + str(len(self.carteAreas))
+        print("closing: " + str(len(self.carteAreas)))
 
     def postCorrectionDissolve(self,areas,nAreas):
         def deleteAreaFromW(areaId,newId,W):
@@ -102,15 +110,15 @@ class rimap():
             return W
         pos = 0
         Wrook, Wqueen = weightsFromAreas(areas)
-        aIds = filter(lambda x: len(Wrook[x])>0,Wrook.keys())
-        aIds0 = filter(lambda x: len(Wrook[x])==0,Wrook.keys())
+        aIds = [x for x in list(Wrook.keys()) if len(Wrook[x])>0]
+        aIds0 = [x for x in list(Wrook.keys()) if len(Wrook[x])==0]
         areas = [areas[x] for x in aIds]
         areas.sort(key = lambda x: len(x[0]))
         Wrook, Wqueen = weightsFromAreas(areas)
-        availableAreas = Wrook.keys()
+        availableAreas = list(Wrook.keys())
         end = False
         pos = availableAreas.pop(0)
-        id2pos = Wrook.keys()
+        id2pos = list(Wrook.keys())
         while len(areas) > nAreas and not end:
             area = areas[id2pos.index(pos)]
             if len(Wrook[pos]) > 0:
@@ -187,7 +195,7 @@ class rimap():
         while len(areas) < nAreas:
             end = False
             while not end:
-                areaOrder = range(0,len(areas))
+                areaOrder = list(range(0,len(areas)))
                 areaOrder.sort(key=lambda x: areas[x].area(),reverse=True)
                 na = areaOrder[0]
                 #na = numpy.random.randint(0,len(areas))
@@ -289,7 +297,7 @@ class rimap():
             else:
                 area = polygon.area()*(1/float(k))
             ratio = (area/float(numpy.pi))**0.5
-            scale = ratio/self.mu
+            scale = old_div(ratio,self.mu)
             areas = []
             uncoveredArea = polygon - coveredArea
             fillOld = 0
@@ -297,7 +305,7 @@ class rimap():
             oldCovered = -1
             areaUnion = Polygon()
             newk = k
-            while uncoveredArea.area()/polygon.area() >= (1-fill): # Mientras se llena al p1%
+            while old_div(uncoveredArea.area(),polygon.area()) >= (1-fill): # Mientras se llena al p1%
                 count += 1
                 if oldCovered != coveredArea.area():
                     count = 0
@@ -314,14 +322,14 @@ class rimap():
                     while end != True:
                         uncovered2select2 = self.postDividePolygons([uncovered2select],2)
                         for x in uncovered2select2:
-                            if newk*x.area()/uncoveredArea.area() <= 1.5:
+                            if old_div(newk*x.area(),uncoveredArea.area()) <= 1.5:
                                 areas.append(x)
                                 uncoveredArea = uncoveredArea - x
                                 coveredArea = coveredArea | x
                                 areaUnion = areaUnion | x
                                 end = True
                 if uncoveredArea.area() > 0:
-                    if newk*uncovered2select.area()/uncoveredArea.area() <= 1.5:
+                    if old_div(newk*uncovered2select.area(),uncoveredArea.area()) <= 1.5:
                         areas.append(uncovered2select)
                         uncoveredArea = uncoveredArea - uncovered2select
                         coveredArea = coveredArea | uncovered2select
@@ -336,7 +344,7 @@ class rimap():
                         sig = numpy.random.uniform(self.sigma[0],self.sigma[1])
                         a,r,sa,sr,X1,times = mrpolygon(alp,sig,self.mu,self.X_0,self.dt,self.N)
                         sa,sr = scalePolygon(sa,sr,scale)
-                        polygoni = polarPolygon2cartesian(zip(sa,sr))
+                        polygoni = polarPolygon2cartesian(list(zip(sa,sr)))
                         polygoni = transportPolygon(polygoni, center, aPoint)
                         polygoni = Polygon(polygoni)
                         polygoni = polygoni - coveredArea
@@ -345,7 +353,7 @@ class rimap():
                             pl = [Polygon(x) for x in polygoni]
                             pl.sort(key=lambda x: x.area())
                             polygoni = pl[-1]
-                        newN = numpy.round(newk*polygoni.area()/uncoveredArea.area())
+                        newN = numpy.round(old_div(newk*polygoni.area(),uncoveredArea.area()))
                         rnd = numpy.random.uniform(0,1)
                         if rnd <= self.pu:
                             newN += numpy.round(numpy.random.uniform(0,self.su)*newk)

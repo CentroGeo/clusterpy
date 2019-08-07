@@ -1,6 +1,10 @@
 # encoding: latin2
 """global inequality change test
 """
+from __future__ import absolute_import
+from builtins import str
+from builtins import zip
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,7 +14,7 @@ __email__ = "contacto@rise-group.org"
 
 __all__ = ['inequalityDynamic']
 
-from theilIndex import theil 
+from .theilIndex import theil 
 import numpy
 import itertools
 
@@ -48,10 +52,10 @@ def interregionalInequalityDifferences(Y, fieldNames, area2regions,
         return result    
     
     def shuffleMap(Y):
-        values = Y.values()
+        values = list(Y.values())
         numpy.random.shuffle(values)
-        keys = Y.keys()
-        newY = dict(zip(keys,values))
+        keys = list(Y.keys())
+        newY = dict(list(zip(keys,values)))
         return newY    
 
     results = {}

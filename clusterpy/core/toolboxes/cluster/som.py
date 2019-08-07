@@ -1,6 +1,9 @@
 # encoding: latin2
 """Self Organizing Maps
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -17,7 +20,7 @@ sys.path += [path]
 import copy
 import inputs
 import time as tm
-from componentsAlg import somManager
+from .componentsAlg import somManager
 
 __all__ = ['originalSOM']
 
@@ -82,9 +85,9 @@ def originalSOM(y,w,
     additional variable with the solution vector (i.e., ID of the region to
     which the area has been assigned).
     """
-    print "Original Self Organizing Maps"
+    print("Original Self Organizing Maps")
     start = tm.time()
-    print "---Generating SOM topology---"
+    print("---Generating SOM topology---")
     oLayer = inputs.createGrid(nRows, nCols)
     manager = somManager(y,
                  iters,
@@ -92,7 +95,7 @@ def originalSOM(y,w,
                  alphaType,
                  initialDistribution,
                  wType)
-    print "Done"
+    print("Done")
     for iter in range(iters):
         manager.clusters = copy.deepcopy(manager.emptyClusters)
         for areaId in manager.order:
@@ -103,8 +106,8 @@ def originalSOM(y,w,
     time = tm.time() - start
     Sol = manager.compressSolution(solution)
     Of = 0
-    print "FINAL SOLUTION: ", Sol
-    print "FINAL O.F.: ", Of
+    print("FINAL SOLUTION: ", Sol)
+    print("FINAL O.F.: ", Of)
     output = { "objectiveFunction": Of,
     "runningTime": time,
     "algorithm": "originalSOM",
@@ -115,7 +118,7 @@ def originalSOM(y,w,
     "selectionType": None,
     "ObjectiveFuncionType": None,
     "SOMOutputLayer": manager.outputLayer}
-    print "Done"
-    if fileName <> None:
+    print("Done")
+    if fileName != None:
         manager.outputLayer.exportArcData(fileName)
     return output

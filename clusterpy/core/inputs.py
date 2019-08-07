@@ -1,6 +1,12 @@
 # encoding: latin2
 """clusterPy input methods
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -11,7 +17,7 @@ __all__ = ['new','load','importArcData','createPoints','createHexagonalGrid',
            'createGrid','importDBF','importCSV','importShape','importGWT']
 
 import struct
-import cPickle
+import pickle
 import re
 from contiguity import weightsFromAreas, fixIntersections
 from layer import Layer
@@ -100,9 +106,9 @@ def new():
         lay = clusterpy.new()
 
     """
-    print "Creating new layer"
+    print("Creating new layer")
     layer = Layer()
-    print "Done"
+    print("Done")
     return layer
 
 def load(filename):
@@ -125,11 +131,11 @@ def load(filename):
         lay.save("lay")
         layer = clusterpy.load("lay")
     """
-    print "Loading cp project"
+    print("Loading cp project")
     f = open(filename + '.cp', 'r') 
-    layer = cPickle.load(f)
+    layer = pickle.load(f)
     f.close()
-    print "Done"
+    print("Done")
     return layer
 
 def importArcData(filename):
@@ -156,18 +162,18 @@ def importArcData(filename):
     """
     layer = Layer()
     layer.name = filename.split('/')[-1]
-    print "Loading " + filename + ".dbf"
+    print("Loading " + filename + ".dbf")
     data, fields, specs = importDBF(filename + '.dbf')
-    print "Loading " + filename + ".shp"
+    print("Loading " + filename + ".shp")
     if fields[0] != "ID":
         fields = ["ID"] + fields
-        for y in data.keys():
+        for y in list(data.keys()):
             data[y] = [y] + data[y]
     layer.fieldNames = fields
     layer.Y = data
     layer.areas, layer.Wqueen, layer.Wrook, layer.shpType = importShape(filename + '.shp')
     layer._defBbox()
-    print "Done"
+    print("Done")
     return layer
 
 def createPoints(nRows, nCols, lowerLeft=(0,0), upperRight=(100,100)):
@@ -202,7 +208,7 @@ def createPoints(nRows, nCols, lowerLeft=(0,0), upperRight=(100,100)):
         points = clusterpy.createPoints(10, 10, lowerLeft=(0, 0), upperRight=(100, 100))
 
     """
-    print "Creating points"
+    print("Creating points")
     yMin = lowerLeft[1]
     yMax = upperRight[1]
     xMin = lowerLeft[0]
@@ -239,7 +245,7 @@ def createPoints(nRows, nCols, lowerLeft=(0,0), upperRight=(100,100)):
     layer.shpType = 'point'
     layer.name = 'root'
     layer._defBbox()
-    print "Done"
+    print("Done")
     return layer
 
 def createHexagonalGrid(nRows, nCols, lowerLeft=(0,0), upperRight=(100,100)):
@@ -271,7 +277,7 @@ def createHexagonalGrid(nRows, nCols, lowerLeft=(0,0), upperRight=(100,100)):
         import clusterpy
         points = clusterpy.createGrid(10, 10, lowerLeft=(0, 0), upperRight=(100, 100))
     """
-    print "Creating grid"
+    print("Creating grid")
     rowHeight = (upperRight[1] - lowerLeft[1])/float(nRows)
     colStep = rowHeight/float(2)
     N = nRows*nCols
@@ -308,7 +314,7 @@ def createHexagonalGrid(nRows, nCols, lowerLeft=(0,0), upperRight=(100,100)):
     layer.shpType = 'polygon'
     layer.name = 'root'
     layer._defBbox()
-    print "Done"
+    print("Done")
     return layer
 
 def createGrid(nRows, nCols, lowerLeft=None, upperRight=None):
@@ -340,7 +346,7 @@ def createGrid(nRows, nCols, lowerLeft=None, upperRight=None):
         import clusterpy
         points = clusterpy.createGrid(10, 10, lowerLeft=(0, 0), upperRight=(100, 100))
     """
-    print "Creating grid"
+    print("Creating grid")
     if lowerLeft != None and upperRight != None:
         ymin = lowerLeft[1]
         ymax = upperRight[1]
@@ -388,7 +394,7 @@ def createGrid(nRows, nCols, lowerLeft=None, upperRight=None):
                 nxPoints * i + nxPoints - 2, nxPoints * i + 2 * nxPoints - 1,
                 nxPoints * i + 2 * nxPoints - 2]
         disAreas = disAreas + [i * nxPoints, nxPoints * i + nxPoints - 1]
-    disAreas = disAreas + range(1, nxPoints - 1) + range((N - nxPoints) + 1, N - 1)
+    disAreas = disAreas + list(range(1, nxPoints - 1)) + list(range((N - nxPoints) + 1, N - 1))
     for i in range(1, nxPoints - 1): # Asigning the neighborhood of the side Areas
         wr[i]=[i - 1, i + nxPoints, i + 1]
         wq[i]=[i - 1, i + nxPoints - 1, i + nxPoints, i + nxPoints + 1, i + 1]
@@ -428,7 +434,7 @@ def createGrid(nRows, nCols, lowerLeft=None, upperRight=None):
     layer.shpType = 'polygon'
     layer.name = 'root'
     layer._defBbox()
-    print "Done"
+    print("Done")
     return layer
 
 def importShape(shapefile):
@@ -497,7 +503,7 @@ def readPoints(bodyBytes):
     bb5 = struct.unpack('>d', bodyBytes.read(8))[0]
     bb6 = struct.unpack('>d', bodyBytes.read(8))[0]
     bb7 = struct.unpack('>d', bodyBytes.read(8))[0]
-    while bodyBytes.read(1) <> "":
+    while bodyBytes.read(1) != "":
         bodyBytes.seek(11, 1)
         x = struct.unpack('<d', bodyBytes.read(8))[0]
         y = struct.unpack('<d', bodyBytes.read(8))[0]
@@ -525,7 +531,7 @@ def readPolylines(bodyBytes):
     bb5 = struct.unpack('>d', bodyBytes.read(8))[0]
     bb6 = struct.unpack('>d', bodyBytes.read(8))[0]
     bb7 = struct.unpack('>d', bodyBytes.read(8))[0]
-    while bodyBytes.read(1) <> "":
+    while bodyBytes.read(1) != "":
         bodyBytes.seek(7, 1)
         bodyBytes.seek(36, 1)
         nParts = struct.unpack('<i', bodyBytes.read(4))[0]
@@ -572,7 +578,7 @@ def readPolygons(bodyBytes):
     bb5 = struct.unpack('>d', bodyBytes.read(8))[0]
     bb6 = struct.unpack('>d', bodyBytes.read(8))[0]
     bb7 = struct.unpack('>d', bodyBytes.read(8))[0]
-    while bodyBytes.read(1) <> "":# 100 bytes for header
+    while bodyBytes.read(1) != "":# 100 bytes for header
         area = []
         bodyBytes.seek(7, 1)
         bodyBytes.seek(36, 1)
@@ -583,7 +589,7 @@ def readPolygons(bodyBytes):
             parts += [struct.unpack('<i', bodyBytes.read(4))[0]]
         ring = []
         for i in range(numPoints):
-            if i in parts and i <> 0:
+            if i in parts and i != 0:
                 area.append(ring)
                 ring = []
                 x = struct.unpack('<d', bodyBytes.read(8))[0]
@@ -640,7 +646,7 @@ def importDBF(filename):
             dec = field[2]
             end = start + l + first
             value = record[start: end]
-            while value.find("  ") <> -1:
+            while value.find("  ") != -1:
                 value = value.replace("  ", " ")
             if value.startswith(" "):
                 value = value[1:]
@@ -727,7 +733,7 @@ def importGWT(filename,initialId=1):
         if items:
             id = int(items.group(1))
             neigh = int(items.group(2))
-            if w.has_key(id - initialId):
+            if id - initialId in w:
                 w[id - initialId].append(neigh - initialId)
             else:
                 w[id - initialId] = [neigh - initialId]

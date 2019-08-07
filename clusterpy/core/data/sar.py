@@ -1,6 +1,10 @@
 # encoding: latin2
 """SAR data module
 """
+from __future__ import division
+from __future__ import print_function
+from builtins import object
+from past.utils import old_div
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2010-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -43,12 +47,12 @@ def generateSAR(w, num, r):
     a = SAR(W, rho=r)
     data = a.realization(n=num)
     Y = {}
-    for i in w.keys():
+    for i in list(w.keys()):
         Y[i] = list(data[i])
     return Y
 
 
-class DGP:
+class DGP(object):
     """Abstract data generating process model"""
 
     def __init__(self, w, rho=0.0, meanY=None, sig2=1.0, M=0.0):
@@ -67,12 +71,12 @@ class DGP:
         self.corrmat()
 
     def summary(self):
-        print "Spatial DGP: %s; size: %d; sig2: %.2f; rho: %.2f"%(self.dgp, self.n, self.sig2,
-                self.rho)
+        print("Spatial DGP: %s; size: %d; sig2: %.2f; rho: %.2f"%(self.dgp, self.n, self.sig2,
+                self.rho))
         #print "n is %d"%self.n
 
     def omega(self):
-        print 'build spatial component of vcv matrix'
+        print('build spatial component of vcv matrix')
 
     def chol(self):
         self.cvcv = numpy.linalg.cholesky(self.vcv)
@@ -80,7 +84,7 @@ class DGP:
     def corrmat(self):
         s = numpy.sqrt(numpy.diag(self.vcv))
         cmat = numpy.outer(s, s)
-        self.ccmat = self.vcv / cmat
+        self.ccmat = old_div(self.vcv, cmat)
 
     def realization(self, n=1):
         e = numpy.random.normal(0, self.sig, (self.n, n))
@@ -108,11 +112,11 @@ def standarizeW(WCP):
     :type WCP: dictionary
     :rtype: tuple (W matrix, Ws standarized matrix)
     """
-    keys = WCP.keys()
+    keys = list(WCP.keys())
     na = len(keys)
     nW = numpy.zeros((na,na))
     nWs = numpy.zeros((na,na))
-    for i in WCP.keys():
+    for i in list(WCP.keys()):
         nn = len(WCP[i])
         for j in WCP[i]:
             nW[i][j] = 1

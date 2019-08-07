@@ -1,5 +1,6 @@
 """basic statistics
 """
+from __future__ import absolute_import
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -8,9 +9,9 @@ __maintainer__ = "RiSE Group"
 __email__ = "contacto@rise-group.org"
 
 
-from GAC import geoAssociationCoef
-from RDC import redistributionCoef
-from SIMC import similarityCoef
+from .GAC import geoAssociationCoef
+from .RDC import redistributionCoef
+from .SIMC import similarityCoef
 
 __all__ = ['geoAssociationCoef', 'redistributionCoef', 'similarityCoef']
 

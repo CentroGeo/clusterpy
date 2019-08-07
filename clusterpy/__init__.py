@@ -1,7 +1,9 @@
 # encoding: latin2
-print "ClusterPy: Library of spatially constrained clustering algorithms"
+from __future__ import print_function
+from __future__ import absolute_import
+print("ClusterPy: Library of spatially constrained clustering algorithms")
 
-from core import *
+from .core import *
 
 __author__ = "Juan C. Duque (Owner), Boris Dev, Alejandro Betancourt, Jose L. Franco, Andres Cano"
 __credits__ = "Copyright (c) 2010-11 Juan C. Duque"
@@ -50,7 +52,7 @@ def CPhelp(function = ''):
         print(CPhelp.__doc__)
     else:
         try:
-            exec 'print('+ function + '.__doc__)'
+            exec('print('+ function + '.__doc__)')
         except:
-            print "Invalid Function, to see available functions execute \
-            'CPhelp()'"
+            print("Invalid Function, to see available functions execute \
+            'CPhelp()'")

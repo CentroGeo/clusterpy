@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy
 
 def polarPolygon2cartesian(polarPolygon):
@@ -25,7 +28,7 @@ def scalePolygon(angles,ratios,scale):
 
 
 def transportPolygon(polygon,center,pointa=0):
-    if center <> 0 or pointa <> 0:
+    if center != 0 or pointa != 0:
         A = pointa
         dx = center[0]
         dy = center[1]
@@ -119,7 +122,7 @@ def mrpolygon(alp,sigma,mu=10,X_0=10,dt=0.001,nPoints=30):
         times.append(t)
         t = a[-1]
     realPoints = len(a)
-    step = int(realPoints/(nPoints-1))
+    step = int(old_div(realPoints,(nPoints-1)))
     for cont in range(realPoints):
         if cont%step == 0:
             sr.append(r[cont])

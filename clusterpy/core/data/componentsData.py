@@ -19,7 +19,7 @@ def wToMatrix(w):
     :rtype: numpy.matrix (sparse contiguity matrix)
      """
     wMatrix = numpy.zeros((len(w), len(w)))
-    for i in w.keys():
+    for i in list(w.keys()):
         weight = 1.0 / len(w[i])
         for j in w[i]:
             wMatrix[i, j] = weight

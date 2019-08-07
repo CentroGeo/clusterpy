@@ -1,6 +1,9 @@
 # encoding: latin2
 """P-regions
 """
+from __future__ import print_function
+from builtins import str
+from builtins import range
 __author__ = "Juan C. Duque"
 __credits__ = "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -66,10 +69,10 @@ def execMinpOrder(y, w, threshold=1, conseq='none'):
 	'mode','range','first','last','numberOfAreas. By default just 
 	ID variable is added to the dissolved map."""
 
-	print "Running min-p-regions model (Duque 2014)"
-	print "Order formulation"
-	print "Number of areas: ", len(y) 
-	print "threshold value: ", threshold
+	print("Running min-p-regions model (Duque 2014)")
+	print("Order formulation")
+	print("Number of areas: ", len(y)) 
+	print("threshold value: ", threshold)
 
 		
 	start = tm.time()
@@ -79,9 +82,9 @@ def execMinpOrder(y, w, threshold=1, conseq='none'):
 	q = n-1
 
 	# Area iterator
-	numA = range(n)
+	numA = list(range(n))
 	# Order iterator
-	numO = range(q)
+	numO = list(range(q))
 
 	z = {}
 	l = {} #spatially extensive attribute
@@ -237,7 +240,7 @@ def execMinpOrder(y, w, threshold=1, conseq='none'):
 			
 		for v in m.getVars():
 			if v.x >0:
-				print v.varName, v.x
+				print(v.varName, v.x)
 				
 		#import pdb; pdb.set_trace()
 		  
@@ -256,11 +259,11 @@ def execMinpOrder(y, w, threshold=1, conseq='none'):
 			"distanceStat" : "None",
 			"selectionType" : "None",
 			"ObjectiveFunctionType" : "None"} 
-		print "Done"
+		print("Done")
 		return output
 				
 	except GurobiError:
-		print 'Error reported'
+		print('Error reported')
 
 
 

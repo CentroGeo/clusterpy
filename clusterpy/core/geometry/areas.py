@@ -1,5 +1,6 @@
 """Geometric area calculation Module
 """
+from __future__ import print_function
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2009-10 Juan C. Duque"
 __license__ = "New BSD License"
@@ -28,7 +29,7 @@ def getGeometricAreas(layer):
     >>> china = clusterpy.importArcData("clusterpy/data_examples/china")
     >>> china.getGeometricAreas()
     """
-    print "Processing geometric areas"
+    print("Processing geometric areas")
     area = 0
     polygons = layer.areas
     lenAreas = {}
@@ -45,6 +46,6 @@ def getGeometricAreas(layer):
                 ringAcum += p1[0] * p2[1] - p1[1] * p2[0]
             areaAcum += ringAcum
         lenAreas[a] = abs(float(areaAcum) / 2)
-    print "Done"
+    print("Done")
     return lenAreas
     

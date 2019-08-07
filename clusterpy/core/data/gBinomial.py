@@ -1,6 +1,7 @@
 # encoding: latin2
 """Global Binomial data module
 """
+from builtins import range
 __author__ = "Juan C. Duque, Alejandro Betancourt"
 __credits__ = "Copyright (c) 2010-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -35,7 +36,7 @@ def generateGBinomial(w, n, num, prob):
     >>> china = clusterpy.importArcData("clusterpy/data_examples/china")
     >>> china.generateData("GBinomial", 'queen', 1, 10000, 0.5)
     """
-    N = len(w.keys())
+    N = len(list(w.keys()))
     y = {}
     for i in range(N):
         j = list(numpy.random.binomial(num, prob, n))

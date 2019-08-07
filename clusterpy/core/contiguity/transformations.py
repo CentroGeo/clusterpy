@@ -32,7 +32,7 @@ def dict2matrix(wDict,std=0,diag=0):
     :rtype: list, List of lists representing the contiguity matrix
     """
     data = []
-    nAreas = len(wDict.keys())
+    nAreas = len(list(wDict.keys()))
     for i in wDict:
         data.append([0]*nAreas)
         data[i][i] = diag
@@ -60,8 +60,8 @@ def dict2sparseMatrix(wDict,std=0,diag=0):
 
     :rtype: list, List of lists representing the contiguity matrix
     """
-    data = lil_matrix((len(wDict.keys()),len(wDict.keys())))
-    nAreas = len(wDict.keys())
+    data = lil_matrix((len(list(wDict.keys())),len(list(wDict.keys()))))
+    nAreas = len(list(wDict.keys()))
     for i in wDict:
         data[i,i] = diag
         ne = len(wDict[i])+ diag

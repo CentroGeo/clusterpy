@@ -1,6 +1,11 @@
 # encoding: latin2
 """AZP-Tabu
 """
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from past.utils import old_div
 __author__ = "Juan C. Duque"
 __credits__= "Copyright (c) 2009-11 Juan C. Duque"
 __license__ = "New BSD License"
@@ -10,9 +15,9 @@ __email__ = "contacto@rise-group.org"
 
 import numpy
 import time as tm
-from componentsAlg import AreaManager
-from componentsAlg import BasicMemory
-from componentsAlg import RegionMaker
+from .componentsAlg import AreaManager
+from .componentsAlg import BasicMemory
+from .componentsAlg import RegionMaker
 
 __all__ = ['execAZPTabu']
 
@@ -83,21 +88,21 @@ def execAZPTabu(y, w, pRegions, initialSolution=[], convTabu=0, tabuLength=10 ):
     ID variable is added to the dissolved map.
     
     """
-    print "Running original AZP-Tabu algorithm (Openshaw and Rao, 1995)"
-    print "Number of areas: ", len(y)
+    print("Running original AZP-Tabu algorithm (Openshaw and Rao, 1995)")
+    print("Number of areas: ", len(y))
     if initialSolution != []:
-        print "Number of regions: ", len(numpy.unique(initialSolution))
+        print("Number of regions: ", len(numpy.unique(initialSolution)))
         pRegions = len(numpy.unique(initialSolution))
     else:
-        print "Number of regions: ", pRegions
+        print("Number of regions: ", pRegions)
     if pRegions >= len(y):
         message = "\n WARNING: You are aggregating "+str(len(y))+" into"+\
         str(pRegions)+" regions!!. The number of regions must be an integer"+\
         " number lower than the number of areas being aggregated"
-        raise Exception, message 
+        raise Exception(message) 
 
     if convTabu <= 0:
-        convTabu = max(10,len(y)/pRegions)  #   convTabu = 230*numpy.sqrt(pRegions)
+        convTabu = max(10,old_div(len(y),pRegions))  #   convTabu = 230*numpy.sqrt(pRegions)
     distanceType = "EuclideanSquared" 
     distanceStat = "Centroid"
     objectiveFunctionType = "SS"
@@ -107,7 +112,7 @@ def execAZPTabu(y, w, pRegions, initialSolution=[], convTabu=0, tabuLength=10 ):
 
     #  CONSTRUCTION
 
-    print "Constructing regions"
+    print("Constructing regions")
     rm = RegionMaker(am, pRegions,
                     initialSolution=initialSolution,
                     distanceType=distanceType,
@@ -115,19 +120,19 @@ def execAZPTabu(y, w, pRegions, initialSolution=[], convTabu=0, tabuLength=10 ):
                     selectionType=selectionType,
                     objectiveFunctionType=objectiveFunctionType)
     Sol = rm.returnRegions()
-    print "initial Solution: ", Sol
-    print "initial O.F: ", rm.objInfo
+    print("initial Solution: ", Sol)
+    print("initial O.F: ", rm.objInfo)
 
     # LOCAL SEARCH
 
-    print "Performing local search"
+    print("Performing local search")
     rm.AZPTabuMove(tabuLength=tabuLength, convTabu=convTabu)
     rm.calcObj()
     time = tm.time() - start
     Sol = rm.returnRegions()
     Of = rm.objInfo
-    print "FINAL SOLUTION: ", Sol
-    print "FINAL OF: ", Of
+    print("FINAL SOLUTION: ", Sol)
+    print("FINAL OF: ", Of)
     output = { "objectiveFunction": Of,
     "runningTime": time,
     "algorithm": "azpTabu",
@@ -137,5 +142,5 @@ def execAZPTabu(y, w, pRegions, initialSolution=[], convTabu=0, tabuLength=10 ):
     "distanceStat": distanceStat,
     "selectionType": selectionType,
     "ObjectiveFuncionType": objectiveFunctionType}
-    print "Done"
+    print("Done")
     return output

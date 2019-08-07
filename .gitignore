@@ -5,3 +5,6 @@
 *.log
 testOutputs
 corec
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+*.bak
