@@ -18,7 +18,7 @@ path = os.path.split(path)[0]
 path = os.path.split(path)[0]
 sys.path += [path]
 import copy
-import inputs
+#import inputs
 import time as tm
 from .componentsAlg import somManager
 
