@@ -90,7 +90,7 @@ def execPregionsExact(y, w, p=2,rho='none', inst='none', conseq='none'):
     temp=list(range(n-1))
     for i in temp:
         list1=[]
-    	for j in numA:
+        for j in numA:
             if i<j:
                 list1.append(distanceA2AEuclideanSquared([y[i],y[j]])[0][0])
         d[i]=list1
@@ -101,96 +101,96 @@ def execPregionsExact(y, w, p=2,rho='none', inst='none', conseq='none'):
 		# CONSTRUCTION OF THE MODEL
 		
 		# Tolerance to non-integer solutions
-		tol = 1e-5 #min value: 1e-9
+        tol = 1e-5 #min value: 1e-9
 				
 	
 		# Create the new model
-		m=Model("pRegions")
+        m=Model("pRegions")
 
 		# Create variables
 
 		# t_ij
 		# 1 if areas i and j belongs to the same region
 		# 0 otherwise
-		t = []
-		for i in numA:
-			t_i = []
-			for j in numA:
-				t_i.append(m.addVar(vtype=GRB.BINARY,name="t_"+str([i,j])))
-			t.append(t_i)
+        t = []
+        for i in numA:
+            t_i = []
+            for j in numA:
+                t_i.append(m.addVar(vtype=GRB.BINARY,name="t_"+str([i,j])))
+            t.append(t_i)
 
 		# x_ij
 		# 1 if arc between adjacent areas i and j is selected for a tree graph
 		# 0 otherwise
-		x = []
-		for i in numA:
-			x_i=[]
-			for j in numA:
-				x_i.append(m.addVar(vtype=GRB.BINARY,name="x_"+str([i,j])))
-			x.append(x_i)
+        x = []
+        for i in numA:
+            x_i=[]
+            for j in numA:
+                x_i.append(m.addVar(vtype=GRB.BINARY,name="x_"+str([i,j])))
+            x.append(x_i)
 			
 		# u_i
 		# Order assigned to each area i in a tree
-		u = []
-		for i in numA:
+        u = []
+        for i in numA:
 			#u.append(m.addVar(lb=1-tol, ub=n-p-tol, vtype=GRB.INTEGER,name="u_"+str(i)))
-			u.append(m.addVar(lb=1, vtype=GRB.INTEGER,name="u_"+str(i)))
+            u.append(m.addVar(lb=1, vtype=GRB.INTEGER,name="u_"+str(i)))
 
 			  
 		# Integrate new variables
-		m.update()
+        m.update()
 	
 		# Objective function
-
-		of=0
-		for i in numA:
-			for j in range(i+1,n):
-				of+=t[i][j]*d[i][j-i-1]
-	
-		m.setObjective(of, GRB.MINIMIZE)
+        
+        of=0
+        for i in numA:
+            for j in range(i+1,n):
+                of+=t[i][j]*d[i][j-i-1]
+        
+        m.setObjective(of, GRB.MINIMIZE)
 
 		# Constraints 1, 5, 6
-		temp = 0
-		for i in numA:
-			for j in w[i]:
-				temp += x[i][j]
+        temp = 0
+        for i in numA:
+            for j in w[i]:
+                temp += x[i][j]
 				#m.addConstr(x[i][j]-t[i][j]<=tol,"c5_"+str([i,j]))
-				m.addConstr(x[i][j]-t[i][j]<=0,"c5_"+str([i,j]))
+                m.addConstr(x[i][j]-t[i][j]<=0,"c5_"+str([i,j]))
 				#m.addConstr(u[i]-u[j]+(n-p)*x[i][j]+(n-p-2)*x[j][i]<=(l-tol-1),"c6_"+str([i,j]))
-				m.addConstr(u[i]-u[j]+(n-p)*x[i][j]+(n-p-2)*x[j][i]<=(l-1),"c6_"+str([i,j]))
+                m.addConstr(u[i]-u[j]+(n-p)*x[i][j]+(n-p-2)*x[j][i]<=(l-1),"c6_"+str([i,j]))
  		
 		#m.addConstr(temp == l-tol,"c1")
-		m.addConstr(temp == l,"c1")
+        m.addConstr(temp == l,"c1")
 
 		# Constraint 2
-		i = 0
-		for x_i in x:
-			temp =[]
-			for j in w[i]:
-				temp.append(x_i[j])
+        i = 0
+        for x_i in x:
+            temp =[]
+            for j in w[i]:
+                temp.append(x_i[j])
 			#m.addConstr(quicksum(temp) <=1-tol, "c2_"+str(i))
-			m.addConstr(quicksum(temp) <=1, "c2_"+str(i))
-			i += 1
+            m.addConstr(quicksum(temp) <=1, "c2_"+str(i))
+            i += 1
 
 		# Constraints 3, 4
-		for i in numA:
-			for j in numA:
-				if i!=j:
+        for i in numA:
+            for j in numA:
+                if i!=j:
 					#m.addConstr(t[i][j]-t[j][i]<=tol,"c4_"+str([i,j]))
-					m.addConstr(t[i][j]-t[j][i]==0,"c4_"+str([i,j]))
-					for em in numA:
-						if em!=j:
+                    m.addConstr(t[i][j]-t[j][i]==0,"c4_"+str([i,j]))
+                    for em in numA:
+                        if em!=j:
 							#m.addConstr(t[i][j]+t[i][em]-t[j][em]<=1-tol,"c3_"+str([i,j,em]))
-							m.addConstr(t[i][j]+t[i][em]-t[j][em]<=1,"c3_"+str([i,j,em]))
+                            m.addConstr(t[i][j]+t[i][em]-t[j][em]<=1,"c3_"+str([i,j,em]))
 		
 		
 		#Constraint REDUNDANTE
-		for i in numA:
-			for j in numA:
-				if i!=j:	
-					m.addConstr(x[i][j]+x[j][i]<=1,"c3_"+str([i,j,em]))
-		
-		m.update()
+        for i in numA:
+            for j in numA:
+                if i!=j:	
+                    m.addConstr(x[i][j]+x[j][i]<=1,"c3_"+str([i,j,em]))
+        
+        m.update()
 
 					
 		#Writes the .lp file format of the model
@@ -201,10 +201,10 @@ def execPregionsExact(y, w, p=2,rho='none', inst='none', conseq='none'):
 		#m.setParam('OutputFlag',False)
 		#m.setParam('ScaleFlag',0)
 		# To set the tolerance to non-integer solutions
-		m.setParam('IntFeasTol', tol)
-		m.setParam('LogFile', 'E-'+str(conseq)+'-'+str(n)+'-'+str(p)+'-'+str(rho)+'-'+str(inst))
-		m.params.timeLimit = 1800
-		m.optimize()
+        m.setParam('IntFeasTol', tol)
+        m.setParam('LogFile', 'E-'+str(conseq)+'-'+str(n)+'-'+str(p)+'-'+str(rho)+'-'+str(inst))
+        m.params.timeLimit = 1800
+        m.optimize()
 		
 		#do IIS
 		# print 'The model is infeasible; computing IIS'
@@ -213,8 +213,8 @@ def execPregionsExact(y, w, p=2,rho='none', inst='none', conseq='none'):
 		# for c in m.getConstrs():
 			# if c.IISConstr:
 				# print c.constrName
-			   
-		time = tm.time()-start
+        
+        time = tm.time()-start
    				
 		# for v in m.getVars():
 			# if v.x >0:
@@ -239,7 +239,7 @@ def execPregionsExact(y, w, p=2,rho='none', inst='none', conseq='none'):
 		# print 'FINAL bound:', m.objBound
 		# print 'GAP:', m.MIPGap
 		# print "running time", time
-		output = { "objectiveFunction": m.objVal,
+        output = { "objectiveFunction": m.objVal,
 			"bestBound": m.objBound,
 			"running time": time,
 			"algorithm": "pRegionsExact",
@@ -249,8 +249,8 @@ def execPregionsExact(y, w, p=2,rho='none', inst='none', conseq='none'):
 			"distanceStat" : "None",
 			"selectionType" : "None",
 			"ObjectiveFunctionType" : "None"} 
-		print("Done")
-		return output
+        print("Done")
+        return output
                 
     except GurobiError:
         print('Error reported')
