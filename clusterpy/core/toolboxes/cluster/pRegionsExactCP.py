@@ -90,7 +90,7 @@ def execPregionsExactCP(y, w, p=2,rho='none', inst='none', conseq='none'):
     temp=list(range(n-1))
     for i in temp:
         list1=[]
-    	for j in numA:
+        for j in numA:
             if i<j:
                 list1.append(distanceA2AEuclideanSquared([y[i],y[j]])[0][0])
         d[i]=list1
@@ -103,133 +103,131 @@ def execPregionsExactCP(y, w, p=2,rho='none', inst='none', conseq='none'):
 		# CONSTRUCTION OF THE MODEL
 		
 		# Tolerance to non-integer solutions
-		tol = 1e-5#1e-9 #min value: 1e-9
+        tol = 1e-5#1e-9 #min value: 1e-9
 	
 		# SUBTOUR ELIMINATION CONSTRAINTS
-		def subtourelim(model, where):
-			if where == GRB.callback.MIPSOL:
-				vals = model.cbGetSolution(model.getVars())
-				varsx = model.getVars()[n*n:]
-				varsx1 = [varsx[i:i+n] for i in range(0,len(varsx),n)]
-				t1 = [vals[i:i+n] for i in range(0,n*n,n)]
-				x1 = [vals[n*n+i:n*n+i+n] for i in range(0,n*n,n)]
-				num = list(numA)
-				cycle = [] #sets of areas involved in cycles
-				while num:
-					area = num[0]
-					c =[area]
-					acum = 0
-					k = 0
-					while True:
-						if k==n:
-							break
-						if x1[area][k]>=1-tol:#==1:
-							acum = 1
-							break
-						k += 1
-					f=num.remove(area)
-					for j in numA:
-						if t1[area][j]>=1-tol:#==1:
-							c.append(j)
-							k=0
-							while True:
-								if k==n:
-									break
-								if x1[j][k]>=1-tol:#==1:
-									acum += 1
-									break
-								k += 1
-							if num.count(j)!=0:
-								b =num.remove(j)
-					if acum==len(c) and acum>1:
-						cycle.append(c)	
-				if len(cycle):
+        def subtourelim(model, where):
+            if where == GRB.callback.MIPSOL:
+                vals = model.cbGetSolution(model.getVars())
+                varsx = model.getVars()[n*n:]
+                varsx1 = [varsx[i:i+n] for i in range(0,len(varsx),n)]
+                t1 = [vals[i:i+n] for i in range(0,n*n,n)]
+                x1 = [vals[n*n+i:n*n+i+n] for i in range(0,n*n,n)]
+                num = list(numA)
+                cycle = [] #sets of areas involved in cycles
+                while num:
+                    area = num[0]
+                    c =[area]
+                    acum = 0
+                    k = 0
+                    while True:
+                        if k==n:
+                            break
+                        if x1[area][k]>=1-tol:#==1:
+                            acum = 1
+                            break
+                        k += 1
+                    f=num.remove(area)
+                    for j in numA:
+                        if t1[area][j]>=1-tol:#==1:
+                            c.append(j)
+                            k=0
+                            while True:
+                                if k==n:
+                                    break
+                                if x1[j][k]>=1-tol:#==1:
+                                    acum += 1
+                                    break
+                                k += 1
+                            if num.count(j)!=0:
+                                b =num.remove(j)
+                    if acum==len(c) and acum>1:
+                        cycle.append(c)	
+                if len(cycle):
 					# add a subtour elimination constraint
-					for cycle_k in cycle:
-							temp1 = 0
-							card = len(cycle_k)
-							for i in cycle_k:
-								for j in cycle_k:
-									if j in w[i]:
-										temp1 += varsx1[i][j]
-							if temp1!=0:
-								model.cbLazy(temp1 <= card-1)
+                    for cycle_k in cycle:
+                        temp1 = 0
+                        card = len(cycle_k)
+                        for i in cycle_k:
+                            for j in cycle_k:
+                                if j in w[i]:
+                                    temp1 += varsx1[i][j]
+                        if temp1!=0:
+                            model.cbLazy(temp1 <= card-1)
 
 				
 	
 		# Create the new model
-		m=Model("pRegions")
+        m=Model("pRegions")
 
 		# Create variables
 
 		# t_ij
 		# 1 if areas i and j belongs to the same region
 		# 0 otherwise
-		t = []
-		for i in numA:
-			t_i = []
-			for j in numA:
-				t_i.append(m.addVar(vtype=GRB.BINARY,name="t_"+str([i,j])))
-			t.append(t_i)
+        t = []
+        for i in numA:
+            t_i = []
+            for j in numA:
+                t_i.append(m.addVar(vtype=GRB.BINARY,name="t_"+str([i,j])))
+            t.append(t_i)
 
 		# x_ij
 		# 1 if arc between adjacent areas i and j is selected for a tree graph
 		# 0 otherwise
-		x = []
-		for i in numA:
-			x_i=[]
-			for j in numA:
-				x_i.append(m.addVar(vtype=GRB.BINARY,name="x_"+str([i,j])))
-			x.append(x_i)
+        x = []
+        for i in numA:
+            x_i=[]
+            for j in numA:
+                x_i.append(m.addVar(vtype=GRB.BINARY,name="x_"+str([i,j])))
+            x.append(x_i)
 			  
 		# Integrate new variables
-		m.update()
+        m.update()
 	
 		# Objective function
-
-		of=0
-		for i in numA:
-			for j in range(i+1,n):
-				of+=t[i][j]*d[i][j-i-1]
-	
-		m.setObjective(of, GRB.MINIMIZE)
+        
+        of=0
+        for i in numA:
+            for j in range(i+1,n):
+                of+=t[i][j]*d[i][j-i-1]
+        
+        m.setObjective(of, GRB.MINIMIZE)
 
 		# Constraints 1, 5
-		temp = 0
-		for i in numA:
-			for j in w[i]:
-				temp += x[i][j]
-				m.addConstr(x[i][j]-t[i][j]<=tol,"c5_"+str([i,j]))
-		
-		m.addConstr(temp == l-tol,"c1")
+        temp = 0
+        for i in numA:
+            for j in w[i]:
+                temp += x[i][j]
+                m.addConstr(x[i][j]-t[i][j]<=tol,"c5_"+str([i,j]))
+        
+        m.addConstr(temp == l-tol,"c1")
 
 		# Constraint 2
-		i = 0
-		for x_i in x:
-			temp =[]
-			for j in w[i]:
-				temp.append(x_i[j])
-			m.addConstr(quicksum(temp) <=1-tol, "c2_"+str(i))
-			i += 1
+        i = 0
+        for x_i in x:
+            temp =[]
+            for j in w[i]:
+                temp.append(x_i[j])
+            m.addConstr(quicksum(temp) <=1-tol, "c2_"+str(i))
+            i += 1
 
 		# Constraints 3, 4
-		for i in numA:
-			for j in numA:
-				if i!=j:
-					m.addConstr(t[i][j]-t[j][i]<=tol,"c4_"+str([i,j]))
-					for em in numA:
-						if em!=j:
-							m.addConstr(t[i][j]+t[i][em]-t[j][em]<=1-tol,"c3_"+str([i,j,em]))
+        for i in numA:
+            for j in numA:
+                if i!=j:
+                    m.addConstr(t[i][j]-t[j][i]<=tol,"c4_"+str([i,j]))
+                    for em in numA:
+                        if em!=j:
+                            m.addConstr(t[i][j]+t[i][em]-t[j][em]<=1-tol,"c3_"+str([i,j,em]))
 							
 		# Constraint REDUNDANTE
-		for i in numA:
-			for j in numA:
-				if i!=j:	
-					m.addConstr(x[i][j]+x[j][i]<=1,"c3_"+str([i,j,em]))
-		
-		
-		
-		m.update()
+        for i in numA:
+            for j in numA:
+                if i!=j:	
+                    m.addConstr(x[i][j]+x[j][i]<=1,"c3_"+str([i,j,em]))
+        
+        m.update()
 
 		#Writes the .lp file format of the model
 		#m.write("test.lp")
@@ -241,16 +239,16 @@ def execPregionsExactCP(y, w, p=2,rho='none', inst='none', conseq='none'):
 		#m.setParam('OutputFlag',False)
 		#m.setParam('ScaleFlag',0)
 		# To set the tolerance to non-integer solutions
-		m.setParam('IntFeasTol', tol)
-		m.setParam('LogFile', 'CP-'+str(conseq)+'-'+str(n)+'-'+str(p)+'-'+str(rho)+'-'+str(inst))
+        m.setParam('IntFeasTol', tol)
+        m.setParam('LogFile', 'CP-'+str(conseq)+'-'+str(n)+'-'+str(p)+'-'+str(rho)+'-'+str(inst))
 		# To enable lazy constraints
-		m.params.LazyConstraints = 1
-		m.params.timeLimit = 1800
+        m.params.LazyConstraints = 1
+        m.params.timeLimit = 1800
 		#m.params.ResultFile= "resultados.sol"
-		m.optimize(subtourelim)
-					
-			   
-		time = tm.time()-start
+        m.optimize(subtourelim)
+        
+        
+        time = tm.time()-start
    				
 		# for v in m.getVars():
 			# if v.x >0:
@@ -277,7 +275,7 @@ def execPregionsExactCP(y, w, p=2,rho='none', inst='none', conseq='none'):
 		# print 'GAP:', m.MIPGap
 		# print "running time", time
 		# print "running timeGR", m.Runtime
-		output = { "objectiveFunction": m.objVal,
+        output = { "objectiveFunction": m.objVal,
 			"bestBound": m.objBound,
 			"running time": time,
 			"algorithm": "pRegionsExactCP",
@@ -287,8 +285,8 @@ def execPregionsExactCP(y, w, p=2,rho='none', inst='none', conseq='none'):
 			"distanceStat" : "None",
 			"selectionType" : "None",
 			"ObjectiveFunctionType" : "None"} 
-		print("Done")
-		return output
+        print("Done")
+        return output
                 
     except GurobiError:
         print('Error reported')
