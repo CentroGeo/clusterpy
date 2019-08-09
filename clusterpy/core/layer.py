@@ -26,67 +26,67 @@ import re
 import time
 import itertools
 
-from data import generateSAR
-from data import generateSMA
-from data import generateCAR
-from data import generateSpots
-from data import generatePositiveSpots
-from data import generateUniform
-from data import generateGBinomial
-from data import generateLBinomial
-from data import dissolveData
-from data import fieldOperation
-from data import spatialLag
+from .data import generateSAR
+from .data import generateSMA
+from .data import generateCAR
+from .data import generateSpots
+from .data import generatePositiveSpots
+from .data import generateUniform
+from .data import generateGBinomial
+from .data import generateLBinomial
+from .data import dissolveData
+from .data import fieldOperation
+from .data import spatialLag
 
-from geometry import dissolveLayer
-from geometry import transportLayer
-from geometry import expandLayer
-from geometry import getBbox
-from geometry import getGeometricAreas
-from geometry import getCentroids
+from .geometry import dissolveLayer
+from .geometry import transportLayer
+from .geometry import expandLayer
+from .geometry import getBbox
+from .geometry import getGeometricAreas
+from .geometry import getCentroids
 
 # Clustering
-from toolboxes import execAZP
-from toolboxes import execArisel
-from toolboxes import execAZPRTabu
-from toolboxes import execAZPSA
-from toolboxes import execAZPTabu
-from toolboxes import execRandom
-from toolboxes.cluster.pRegionsExact import execPregionsExact
-from toolboxes.cluster.pRegionsExactCP import execPregionsExactCP
-from toolboxes.cluster.minpOrder import execMinpOrder
-from toolboxes.cluster.minpFlow import execMinpFlow
-from toolboxes import execMaxpTabu
-from toolboxes import execAMOEBA
-from toolboxes import originalSOM
-from toolboxes import geoSom
-from toolboxes import geoAssociationCoef
-from toolboxes import redistributionCoef
-from toolboxes import similarityCoef
+from .toolboxes import execAZP
+from .toolboxes import execArisel
+from .toolboxes import execAZPRTabu
+from .toolboxes import execAZPSA
+from .toolboxes import execAZPTabu
+from .toolboxes import execRandom
+from .toolboxes.cluster.pRegionsExact import execPregionsExact
+from .toolboxes.cluster.pRegionsExactCP import execPregionsExactCP
+from .toolboxes.cluster.minpOrder import execMinpOrder
+from .toolboxes.cluster.minpFlow import execMinpFlow
+from .toolboxes import execMaxpTabu
+from .toolboxes import execAMOEBA
+from .toolboxes import originalSOM
+from .toolboxes import geoSom
+from .toolboxes import geoAssociationCoef
+from .toolboxes import redistributionCoef
+from .toolboxes import similarityCoef
 
 
 # Irregular Maps
 try:
-    from toolboxes import topoStatistics
-    from toolboxes import noFrontiersW
+    from .toolboxes import topoStatistics
+    from .toolboxes import noFrontiersW
 except:
     pass
 
 # Spatial statistics
-from toolboxes import globalInequalityChanges
-from toolboxes import inequalityMultivar
-from toolboxes import interregionalInequalityTest
-from toolboxes import interregionalInequalityDifferences
+from .toolboxes import globalInequalityChanges
+from .toolboxes import inequalityMultivar
+from .toolboxes import interregionalInequalityTest
+from .toolboxes import interregionalInequalityDifferences
 
 
-from outputs import dbfWriter
-from outputs import shpWriterDis
-from outputs import csvWriter
+from .outputs import dbfWriter
+from .outputs import shpWriterDis
+from .outputs import csvWriter
 
 # Contiguity function
-from contiguity import dict2matrix 
-from contiguity import dict2gal
-from contiguity import dict2csv
+from .contiguity import dict2matrix 
+from .contiguity import dict2gal
+from .contiguity import dict2csv
 
 # Layer
 # Layer.dissolveMap

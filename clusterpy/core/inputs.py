@@ -19,8 +19,8 @@ __all__ = ['new','load','importArcData','createPoints','createHexagonalGrid',
 import struct
 import pickle
 import re
-from contiguity import weightsFromAreas, fixIntersections
-from layer import Layer
+from .contiguity import weightsFromAreas, fixIntersections
+from .layer import Layer
 try:
     from toolboxes import rimap as rim
     __all__ += ['rimap']
@@ -625,8 +625,8 @@ def importDBF(filename):
     lenDataRecord = struct.unpack('h', fileBytes.read(2))[0]
     fileBytes.seek(20, 1)
     while fileBytes.tell() < firstDataRecord - 1:
-        name = ''.join(struct.unpack(11 * 'c', fileBytes.read(11))).replace("\x00", "")
-        typ = ''.join(struct.unpack('c', fileBytes.read(1)))
+        name = b''.join(struct.unpack(11*'c' , fileBytes.read(11))).replace(b"\x00", b"")
+        typ = b''.join(struct.unpack('c', fileBytes.read(1)))
         fileBytes.seek(4, 1)
         siz = struct.unpack('B', fileBytes.read(1))[0]
         dec = struct.unpack('B', fileBytes.read(1))[0]
@@ -645,12 +645,12 @@ def importDBF(filename):
             l = field[1] + 1
             dec = field[2]
             end = start + l + first
-            value = record[start: end]
-            while value.find("  ") != -1:
-                value = value.replace("  ", " ")
-            if value.startswith(" "):
+            value = bytes(record[start: end])
+            while value.find(b"  ") != -1:
+                value = value.replace(b"  ", b" ")
+            if value.startswith(b" "):
                 value = value[1:]
-            if value.endswith(" "):
+            if value.endswith(b" "):
                 value = value[:-1]
             if field[0] in ["N", "F", "B", "I", "O"]:
                 if dec == 0:
