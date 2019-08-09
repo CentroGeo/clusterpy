@@ -613,23 +613,23 @@ def readPolygons(bodyBytes):
     
     AREAS = []
     for i in range(len(shp.index)):
-        boundaries = shp['geometry'][i].boundary
+        figura = []
         if isinstance(shp['geometry'][i].boundary , shapely.geometry.multilinestring.MultiLineString):
-            lista_sp = []
-            for k in range(len(list(boundaries))):
-                coord = list(boundaries[1].coords.xy)
-                lista = []
-                for x, y in zip(coord[0] , coord[1]):
-                    tmp = [x,y]
-                    lista.append(tmp)
-            lista_sp.append(lista)
+            for k in range(len(list(shp['geometry'][i].boundary))):
+                partes = []
+                tmp = list(shp['geometry'][i].boundary[k].coords.xy)
+                for x, y in zip(tmp[0] , tmp[1]):
+                    coord = (x,y)
+                    partes.append(coord)
+                figura.append(partes)
         else:
-            coord = list(boundaries.coords.xy)
-            lista_sp = []
-            for x, y in zip(coord[0] , coord[1]):
-                tmp = [x,y]
-                lista_sp.append(tmp)
-        AREAS.append(lista_sp)
+            partes = []
+            tmp = list(shp['geometry'][i].boundary.coords.xy)
+            for x, y in zip(tmp[0] , tmp[1]):
+                coord = (x,y)
+                partes.append(coord)
+            figura.append(partes)
+        AREAS.append(figura)
     
     INFO = {}
     INFO['type'] = 5
