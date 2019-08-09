@@ -27,6 +27,10 @@ try:
 except:
     pass
 
+import geopandas as gpd
+import numpy as np
+import shapely
+
 # INDEX
 # new
 # load
@@ -480,7 +484,8 @@ def readShape(filename):
     elif shtype == 3: #PolyLine
         INFO, areas = readPolylines(fileObj)
     elif shtype == 5: #Polygon
-        INFO, areas = readPolygons(fileObj)
+        #INFO, areas = readPolygons(fileObj)
+        INFO, areas = readPolygons(filename)
     fileObj.close()
     return INFO, areas
 
@@ -564,43 +569,71 @@ def readPolygons(bodyBytes):
     :type bodyBytes: string
     :rtype: tuple (information about the layer and areas coordinates). 
     """
+#    INFO = {}
+#    INFO['type'] = 5
+#    AREAS = []
+#    id = 0
+#    pos = 100
+#    parts = []
+#    bb0 = struct.unpack('>d', bodyBytes.read(8))[0]
+#    bb1 = struct.unpack('>d', bodyBytes.read(8))[0]
+#    bb2 = struct.unpack('>d', bodyBytes.read(8))[0]
+#    bb3 = struct.unpack('>d', bodyBytes.read(8))[0]
+#    bb4 = struct.unpack('>d', bodyBytes.read(8))[0]
+#    bb5 = struct.unpack('>d', bodyBytes.read(8))[0]
+#    bb6 = struct.unpack('>d', bodyBytes.read(8))[0]
+#    bb7 = struct.unpack('>d', bodyBytes.read(8))[0]
+#    while bodyBytes.read(1) != "":# 100 bytes for header
+#        area = []
+#        bodyBytes.seek(7, 1)
+#        bodyBytes.seek(36, 1)
+#        numParts = struct.unpack('<i', bodyBytes.read(4))[0]
+#        numPoints = struct.unpack('<i', bodyBytes.read(4))[0]
+#        parts = []
+#        for i in range(numParts):
+#            parts += [struct.unpack('<i', bodyBytes.read(4))[0]]
+#        ring = []
+#        for i in range(numPoints):
+#            if i in parts and i != 0:
+#                area.append(ring)
+#                ring = []
+#                x = struct.unpack('<d', bodyBytes.read(8))[0]
+#                y = struct.unpack('<d', bodyBytes.read(8))[0]
+#                ring += [(x, y)]
+#            else:
+#                x = struct.unpack('<d', bodyBytes.read(8))[0]
+#                y = struct.unpack('<d', bodyBytes.read(8))[0]
+#                ring += [(x, y)]
+#        area.append(ring)
+#        AREAS.append(area)
+    
+    # ==============================================================
+    
+    shp = gpd.read_file(bodyBytes)
+    
+    AREAS = []
+    for i in range(len(shp.index)):
+        boundaries = shp['geometry'][i].boundary
+        if isinstance(shp['geometry'][i].boundary , shapely.geometry.multilinestring.MultiLineString):
+            lista_sp = []
+            for k in range(len(list(boundaries))):
+                coord = list(boundaries[1].coords.xy)
+                lista = []
+                for x, y in zip(coord[0] , coord[1]):
+                    tmp = [x,y]
+                    lista.append(tmp)
+            lista_sp.append(lista)
+        else:
+            coord = list(boundaries.coords.xy)
+            lista_sp = []
+            for x, y in zip(coord[0] , coord[1]):
+                tmp = [x,y]
+                lista_sp.append(tmp)
+        AREAS.append(lista_sp)
+    
     INFO = {}
     INFO['type'] = 5
-    AREAS = []
-    id = 0
-    pos = 100
-    parts = []
-    bb0 = struct.unpack('>d', bodyBytes.read(8))[0]
-    bb1 = struct.unpack('>d', bodyBytes.read(8))[0]
-    bb2 = struct.unpack('>d', bodyBytes.read(8))[0]
-    bb3 = struct.unpack('>d', bodyBytes.read(8))[0]
-    bb4 = struct.unpack('>d', bodyBytes.read(8))[0]
-    bb5 = struct.unpack('>d', bodyBytes.read(8))[0]
-    bb6 = struct.unpack('>d', bodyBytes.read(8))[0]
-    bb7 = struct.unpack('>d', bodyBytes.read(8))[0]
-    while bodyBytes.read(1) != "":# 100 bytes for header
-        area = []
-        bodyBytes.seek(7, 1)
-        bodyBytes.seek(36, 1)
-        numParts = struct.unpack('<i', bodyBytes.read(4))[0]
-        numPoints = struct.unpack('<i', bodyBytes.read(4))[0]
-        parts = []
-        for i in range(numParts):
-            parts += [struct.unpack('<i', bodyBytes.read(4))[0]]
-        ring = []
-        for i in range(numPoints):
-            if i in parts and i != 0:
-                area.append(ring)
-                ring = []
-                x = struct.unpack('<d', bodyBytes.read(8))[0]
-                y = struct.unpack('<d', bodyBytes.read(8))[0]
-                ring += [(x, y)]
-            else:
-                x = struct.unpack('<d', bodyBytes.read(8))[0]
-                y = struct.unpack('<d', bodyBytes.read(8))[0]
-                ring += [(x, y)]
-        area.append(ring)
-        AREAS.append(area)
+    
     return INFO, AREAS
 
 def importDBF(filename):
