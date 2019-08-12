@@ -27,9 +27,11 @@ try:
 except:
     pass
 
-import geopandas as gpd
-import numpy as np
-import shapely
+#import geopandas as gpd
+#import numpy as np
+#import shapely
+
+import fiona
 
 # INDEX
 # new
@@ -609,27 +611,20 @@ def readPolygons(bodyBytes):
     
     # ==============================================================
     
-    shp = gpd.read_file(bodyBytes)
+    source = fiona.open(bodyBytes, 'r')
     
     AREAS = []
-    for i in range(len(shp.index)):
-        figura = []
-        if isinstance(shp['geometry'][i].boundary , shapely.geometry.multilinestring.MultiLineString):
-            for k in range(len(list(shp['geometry'][i].boundary))):
-                partes = []
-                tmp = list(shp['geometry'][i].boundary[k].coords.xy)
-                for x, y in zip(tmp[0] , tmp[1]):
-                    coord = (x,y)
-                    partes.append(coord)
+    
+    for i in source:
+        if i['geometry']['type'] == 'MultiPolygon':
+            figura = []
+            for k in i['geometry']['coordinates']:
+                partes = k[0]
                 figura.append(partes)
+            AREAS.append(figura)
         else:
-            partes = []
-            tmp = list(shp['geometry'][i].boundary.coords.xy)
-            for x, y in zip(tmp[0] , tmp[1]):
-                coord = (x,y)
-                partes.append(coord)
-            figura.append(partes)
-        AREAS.append(figura)
+            figura = i['geometry']['coordinates']
+            AREAS.append(figura)
     
     INFO = {}
     INFO['type'] = 5
