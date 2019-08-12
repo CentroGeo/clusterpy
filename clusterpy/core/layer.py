@@ -304,8 +304,8 @@ class Layer(object):
             china = clusterpy.importArcData("clusterpy/data_examples/china")
             Y1990 = china.getVars(["Y1990"])
             MY1990 = {}
-            for area_i,pop in enumerate(Y1990):
-               MY1990[area_i] = pop*10
+            for i in Y1990:
+               MY1990[i] = Y1990[i][0]*10
             china.addVariable(['10Y1990'], MY1990)
 
         **Example 2** ::
