@@ -169,7 +169,7 @@ def importArcData(filename):
     layer = Layer()
     layer.name = filename.split('/')[-1]
     print("Loading " + filename + ".dbf")
-    data, fields, specs = importDBF(filename + '.dbf')
+    data, fields, specs = importDBF(filename + '.shp')
     print("Loading " + filename + ".shp")
     if fields[0] != "ID":
         fields = ["ID"] + fields
@@ -629,12 +629,14 @@ def readPolygons(bodyBytes):
     INFO = {}
     INFO['type'] = 5
     
+    source.close()
+    
     return INFO, AREAS
 
 def importDBF(filename):
     """Get variables from a dbf file.
     
-    :param filename: name of the file (String) including ".dbf"
+    :param filename: name of the file (String) including ".dbf" /// Now changed to '.shp'
     :type filename: string
     :rtype: tuple (dbf file Data, fieldNames and fieldSpecs).
 
@@ -643,51 +645,70 @@ def importDBF(filename):
         import clusterpy
         chinaData = clusterpy.importDBF("clusterpy/data_examples/china.dbf")
     """
+#    Y = {}
+#    fieldNames = []
+#    fieldSpecs = []
+#    fileBytes = open(filename, 'rb')
+#    fileBytes.seek(4, 1)
+#    numberOfRecords = struct.unpack('i', fileBytes.read(4))[0]
+#    firstDataRecord = struct.unpack('h', fileBytes.read(2))[0]
+#    lenDataRecord = struct.unpack('h', fileBytes.read(2))[0]
+#    fileBytes.seek(20, 1)
+#    while fileBytes.tell() < firstDataRecord - 1:
+#        name = b''.join(struct.unpack(11*'c' , fileBytes.read(11))).replace(b"\x00", b"")
+#        typ = b''.join(struct.unpack('c', fileBytes.read(1)))
+#        fileBytes.seek(4, 1)
+#        siz = struct.unpack('B', fileBytes.read(1))[0]
+#        dec = struct.unpack('B', fileBytes.read(1))[0]
+#        spec = (typ, siz, dec)
+#        fieldNames += [name]
+#        fieldSpecs += [spec]
+#        fileBytes.seek(14, 1)
+#    fileBytes.seek(1, 1)
+#    Y = {}
+#    for nrec in range(numberOfRecords):
+#        record = fileBytes.read(lenDataRecord)
+#        start = 0
+#        first = 0
+#        Y[nrec] = []
+#        for nf, field in enumerate(fieldSpecs):
+#            l = field[1] + 1
+#            dec = field[2]
+#            end = start + l + first
+#            value = bytes(record[start: end])
+#            while value.find(b"  ") != -1:
+#                value = value.replace(b"  ", b" ")
+#            if value.startswith(b" "):
+#                value = value[1:]
+#            if value.endswith(b" "):
+#                value = value[:-1]
+#            if field[0] in ["N", "F", "B", "I", "O"]:
+#                if dec == 0:
+#                    value = int(float(value))
+#                else:
+#                    value = float(value)
+#            start = end
+#            first = -1
+#            Y[nrec] += [value]
+    
+    # =========================================================
+    
+    source = fiona.open(filename, 'r')
+    
+    fieldNames = list(source[0]['properties'])
+    
     Y = {}
-    fieldNames = []
+    
+    for i in source:
+        tmp = []
+        for k in fieldNames:
+            tmp.append(i['properties'][k])
+        Y[int(i['id'])] = tmp
+    
     fieldSpecs = []
-    fileBytes = open(filename, 'rb')
-    fileBytes.seek(4, 1)
-    numberOfRecords = struct.unpack('i', fileBytes.read(4))[0]
-    firstDataRecord = struct.unpack('h', fileBytes.read(2))[0]
-    lenDataRecord = struct.unpack('h', fileBytes.read(2))[0]
-    fileBytes.seek(20, 1)
-    while fileBytes.tell() < firstDataRecord - 1:
-        name = b''.join(struct.unpack(11*'c' , fileBytes.read(11))).replace(b"\x00", b"")
-        typ = b''.join(struct.unpack('c', fileBytes.read(1)))
-        fileBytes.seek(4, 1)
-        siz = struct.unpack('B', fileBytes.read(1))[0]
-        dec = struct.unpack('B', fileBytes.read(1))[0]
-        spec = (typ, siz, dec)
-        fieldNames += [name]
-        fieldSpecs += [spec]
-        fileBytes.seek(14, 1)
-    fileBytes.seek(1, 1)
-    Y = {}
-    for nrec in range(numberOfRecords):
-        record = fileBytes.read(lenDataRecord)
-        start = 0
-        first = 0
-        Y[nrec] = []
-        for nf, field in enumerate(fieldSpecs):
-            l = field[1] + 1
-            dec = field[2]
-            end = start + l + first
-            value = bytes(record[start: end])
-            while value.find(b"  ") != -1:
-                value = value.replace(b"  ", b" ")
-            if value.startswith(b" "):
-                value = value[1:]
-            if value.endswith(b" "):
-                value = value[:-1]
-            if field[0] in ["N", "F", "B", "I", "O"]:
-                if dec == 0:
-                    value = int(float(value))
-                else:
-                    value = float(value)
-            start = end
-            first = -1
-            Y[nrec] += [value]
+    
+    source.close()
+    
     return (Y, fieldNames, fieldSpecs)
 
 def importCSV(filename,header=True,delimiter=","):
