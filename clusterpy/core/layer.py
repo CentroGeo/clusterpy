@@ -1620,15 +1620,18 @@ be a shock period")
             fieldNames = args
         else:
             Y = self.Y
-            fieldNames = self.fieldNames
+            tmp = []
+            for x in self.fieldNames:
+                tmp.append(x.encode())
+            fieldNames = tmp
         fieldspecs = []
         types = Y[0] 
         for i in types:
             itype = str(type(i))
             if 'str' in itype:
-                fieldspecs.append(('C', 10, 0))
+                fieldspecs.append((b'C', 10, 0))
             else:
-                fieldspecs.append(('N', 10, 3))
+                fieldspecs.append((b'N', 10, 3))
         records = list(range(len(Y)))
         for i in range(len(Y)):
             if len(fieldNames) == 2:

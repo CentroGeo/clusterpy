@@ -138,19 +138,19 @@ def shpWriter2(areas, fileName, type=5):
     f = open(fileName + '.shp', "wb")
     g = open(fileName + '.shx', "wb")
     N = len(areas)
-    linea = ''
-    areaValues = ''
+    linea = b''
+    areaValues = b''
     allX = []
     allY = []
     oldOffset = 50
     shxOffset = 0
-    linea2 = ''
+    linea2 = b''
     for i,ar in enumerate(areas):
         numPoints = 0
         X = []
         Y = []
-        puntos = ''
-        parts = ''
+        puntos = b''
+        parts = b''
         for pa in ar:
             parts = parts + struct.pack('<i', numPoints)
             numPoints = numPoints + len(pa)
@@ -234,12 +234,12 @@ def dbfWriter(fieldnames, fieldspecs, records, fileName):
     hdr = struct.pack('<BBBBLHH20x', ver, yr, mon, day, numrec, lenheader, lenrecord)
     f.write(hdr)
     for name, (typ, size, deci) in zip(fieldnames, fieldspecs):
-        name = name.ljust(11, '\x00')
+        name = name.ljust(11, b'\x00')
         fld = struct.pack('<11sc4xBB14x', name, typ, size, deci)
         f.write(fld)
-    f.write('\r')
+    f.write(b'\r')
     for record in records:
-        f.write(' ')
+        f.write(b' ')
         for (typ, size, deci), value in zip(fieldspecs, record):
             if typ == "N":
                 value = (("%." + str(size) + "f") % value)[0: size].rjust(size, ' ') 
@@ -250,8 +250,8 @@ def dbfWriter(fieldnames, fieldspecs, records, fileName):
             else:
                 value = str(value)[: size].ljust(size, ' ')
             assert len(value) == size
-            f.write(value)
-    f.write('\x1A')
+            f.write(value.encode())
+    f.write(b'\x1A')
     f.close()
 
 def csvWriter(filename, headers, data):
