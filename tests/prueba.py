@@ -1,3 +1,4 @@
+from builtins import range
 import clusterpy
 
 instance = clusterpy.createGrid(10, 10)
@@ -8,7 +9,7 @@ azpTexp=instance.fieldNames[-1]
 output=instance.outputCluster[azpTexp]
 sol = output["r2a"]
 n=100
-numA = range(n)
+numA = list(range(n))
 t={(i,j):0 for i in numA for j in numA if i<j}
 #import pdb; pdb.set_trace()
 num = list(numA)

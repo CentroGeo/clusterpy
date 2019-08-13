@@ -2,7 +2,9 @@
 Testing clustering algorithms in Clusterpy
 ** All the following tests take considerable time to complete **
 """
+from __future__ import division
 
+from past.utils import old_div
 from unittest import TestCase, skip
 from nose.plugins.attrib import attr
 import clusterpy
@@ -117,7 +119,7 @@ class TestMaxPTabu(TestCase):
 
         for threshold in thresholds:
             instance.cluster('maxpTabu', ['CONSTANTS'], threshold=threshold)
-            region_size = cnt(instance.region2areas).values()
+            region_size = list(cnt(instance.region2areas).values())
             self.assertTrue(all(item >= threshold for item in region_size))
 
 class TestAZPalgorithms(TestCase):
@@ -200,7 +202,7 @@ class TestAZPalgorithms(TestCase):
         aream = AreaManager(instance.Wrook, instance.Y)
         rm = RegionMaker(aream, into_regions)
 
-        convTabu = max(10, len(instance.Y) / into_regions)
+        convTabu = max(10, old_div(len(instance.Y), into_regions))
         tabuLength = 10
 
         ob_before = rm.objInfo
@@ -228,7 +230,7 @@ class TestAZPalgorithms(TestCase):
         aream = AreaManager(instance.Wrook, instance.Y)
         rm = RegionMaker(aream, into_regions)
 
-        convTabu = len(instance.Y)/into_regions
+        convTabu = old_div(len(instance.Y),into_regions)
 
         ob_before = rm.objInfo
         rm.reactiveTabuMove(convTabu)

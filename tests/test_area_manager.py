@@ -3,6 +3,7 @@ Testing clustering algorithms in Clusterpy -Helper functions-
 Tests for one of the core classes in clusterpy.
 """
 
+from builtins import range
 from unittest import TestCase
 from math import pi
 from clusterpy.core.toolboxes.cluster.componentsAlg import AreaManager
@@ -10,7 +11,7 @@ from clusterpy.core.toolboxes.cluster.componentsAlg import AreaManager
 class TestAreaManager(TestCase):
     def setUp(self):
 
-        self.Y = {i:[pi*i] for i in xrange(8)}
+        self.Y = {i:[pi*i] for i in range(8)}
 
         """
         Simple map of 6 Areas.

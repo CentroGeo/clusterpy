@@ -3,6 +3,7 @@ Testing clustering algorithms in Clusterpy -Helper functions-
 Tests for one of the core classes in clusterpy. Region Maker.
 """
 
+from builtins import range
 from unittest import TestCase, skip
 from math import pi
 from clusterpy import importArcData
@@ -32,7 +33,7 @@ class TestRegionMaker(TestCase):
         """Number of regions is exogenous, aka given (Wrook)"""
         am = AreaManager(self.Wrook, self.Y)
 
-        for regions in xrange(1, max_num_regions):
+        for regions in range(1, max_num_regions):
             rm = RegionMaker(am, pRegions=regions)
             self.assertEqual(regions, len(rm.region2Area))
             self.assertTrue(am.checkFeasibility(rm.returnRegions()))
@@ -41,7 +42,7 @@ class TestRegionMaker(TestCase):
         """Number of regions is exogenous, aka given (Wqueen)"""
         am = AreaManager(self.Wqueen, self.Y)
 
-        for regions in xrange(1, max_num_regions):
+        for regions in range(1, max_num_regions):
             rm = RegionMaker(am, pRegions=regions)
             self.assertEqual(regions, len(rm.region2Area))
             self.assertTrue(am.checkFeasibility(rm.returnRegions()))

@@ -3,6 +3,7 @@ Testing clustering algorithms in Clusterpy -Helper functions-
 Tests for one of the core classes in clusterpy. Region Maker.
 """
 
+from builtins import range
 from unittest import TestCase, skip
 from clusterpy import importArcData
 from clusterpy.core.toolboxes.cluster.componentsAlg import AreaManager
@@ -28,14 +29,14 @@ class TestMulticore(TestCase):
         on the same script (process) will """
         am = AreaManager(self.Wrook, self.Y)
         regions = []
-        for _reg in xrange(1, max_num_regions):
+        for _reg in range(1, max_num_regions):
             rm = RegionMaker(am, pRegions=max_num_regions)
             self.assertEqual(max_num_regions, len(rm.region2Area))
             self.assertTrue(am.checkFeasibility(rm.returnRegions()))
             regions.append(rm.returnRegions())
 
-        for regioni in xrange(len(regions) - 1):
-            for regionj in xrange(regioni + 1, len(regions)):
+        for regioni in range(len(regions) - 1):
+            for regionj in range(regioni + 1, len(regions)):
                 self.assertNotEqual(regions[regioni], regions[regionj])
 
     @skip

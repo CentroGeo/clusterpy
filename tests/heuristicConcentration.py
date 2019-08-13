@@ -1,3 +1,4 @@
+from builtins import str
 import clusterpy
 import sys
 from operator import itemgetter
