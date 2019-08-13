@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/clusterpy/clusterpy.png?branch=master)](https://travis-ci.org/clusterpy/clusterpy)
+[![Build Status](https://travis-ci.org/clusterpy/clusterpy.png?branch=python3_upgrade)](https://travis-ci.org/clusterpy/clusterpy)
 ClusterPy
 =========
 
