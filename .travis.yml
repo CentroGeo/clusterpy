@@ -1,7 +1,7 @@
 language: python
 python:
-#  - "3.3"
-  - 2.7
+  - "3.7"
+#  - 2.7
 #  - "2.6"
 
 virtualenv:
@@ -15,7 +15,7 @@ before_install:
   - sudo apt-get install -y python-pip
 
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install --allow-external Polygon2 --allow-unverified Polygon2 Polygon2; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.7.3' ]]; then pip install --allow-external Polygon2 --allow-unverified Polygon2 Polygon2; fi
   - pip install nose
   - pip install matplotlib
 
