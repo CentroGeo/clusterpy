@@ -25,7 +25,8 @@ install:
   - pip install matplotlib
   - pip install fiona
   - pip install future
-
+  - pip install scipy
+  
 script:  nosetests
 
 notifications:
